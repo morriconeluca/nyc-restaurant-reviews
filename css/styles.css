@@ -1,0 +1,164 @@
+/*! 2018 (c) Luca Morricone <morricone.luca@outlook.com> - MIT License */
+
+/* ========== BASIC ========== */
+/* Not a complete CSS reboot */
+
+html {
+  color: rgba(0,0,0,0.8);
+  font: 18px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  -ms-overflow-style: scrollbar;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* 1. Prevent font boosting on mobile browsers */
+html *,
+::before,
+::after {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+  max-height: 999999px; /* 1 */
+}
+
+/* Prevent horizontal bar scrolling (if... take a look at html and body width, box-sizing, margin-left and margin-right) */
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+a[href] {
+  color: #0d47a1; /* GMD Blue 900 */
+  text-decoration: none;
+  border-radius: 0.125em;
+}
+
+a[href]:not(.button):hover {
+  text-decoration: underline;
+}
+
+a[href]:focus,
+a[href]:hover:active {
+  text-decoration: none;
+}
+
+a[href]:active {
+  background-color: rgba(68,138,255,0.4096); /* GMD Blue A200 */
+}
+
+h1 {
+  font-size: 1.953125em;
+  margin: 0.64em 0;
+}
+
+h2 {
+  font-size: 1.5625em;
+  margin: 0.8em 0;
+}
+
+h3 {
+  font-size: 1.25em;
+  margin: 1em 0;
+}
+
+ol,
+ul {
+  padding: 0 0 0 1.5625em;
+  list-style-position: inside;
+}
+
+img,
+embed,
+object,
+video {
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+button,
+input,
+select,
+textarea {
+  font-size: 1.25em;
+  line-height: 1.25;
+  padding: 0.32768em;
+}
+
+optgroup,
+option {
+  font-size: 0.8em;
+}
+
+optgroup option {
+  font-size: 1em;
+}
+
+/* Remove text focusring in firefox */
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 rgba(0,0,0,0.8);
+}
+
+/* Remove select element arrow in IE 10+ */
+select::-ms-expand {
+  display: none;
+}
+
+/* 1. Remove select element arrow in firefox */
+/* 2. Remove select element arrow in webkit browsers */
+/* 3. Correct height in all browsers */
+/* 4. Correct vertical-align in firefox */
+select {
+  -moz-appearance: none; /* 1 */
+  -webkit-appearance: none; /* 2 */
+  height: 2em; /* 3 */
+  vertical-align: bottom; /* 4 */
+  color: inherit;
+  background-color: #fff;
+  background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>');
+  background-position: calc(100% - 0.32768em) 50%, 50% 100%;
+  background-size: 1.25em 1.25em;
+  background-repeat: no-repeat;
+  padding-right: 1.90536em;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #cfd8dc; /* GMD Blue Grey 100 */
+}
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: none;
+}
+
+[contenteditable]:focus,
+a[href]:not(:active):focus,
+area[href]:not(:active):focus,
+audio:not(:active):focus,
+button:not([disabled]):not(:active):focus,
+embed:focus,
+iframe:focus,
+input:not([disabled]):not(:active):focus,
+object:focus,
+select:not([disabled]):focus,
+textarea:not([disabled]):focus,
+video:not(:active):focus {
+  outline-offset: 1px;
+  outline: 2px solid #82b1ff;
+}
+
+[contenteditable]:focus:active,
+embed:focus:active,
+iframe:focus:active,
+object:focus:active,
+select:not([disabled]):focus:active,
+textarea:not([disabled]):focus:active {
+  outline: none;
+}
