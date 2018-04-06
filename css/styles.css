@@ -1,7 +1,7 @@
 /*! 2018 (c) Luca Morricone <morricone.luca@outlook.com> - MIT License */
 
 /* ========== BASIC ========== */
-/* Not a complete CSS reboot */
+/* This is not a complete CSS reboot, but should be enough */
 
 html {
   color: rgba(0,0,0,0.8);
@@ -109,20 +109,19 @@ select::-ms-expand {
 
 /* 1. Remove select element arrow in firefox */
 /* 2. Remove select element arrow in webkit browsers */
-/* 3. Correct height in all browsers */
-/* 4. Correct vertical-align in firefox */
+/* 3. Correct select height in all modern browsers */
+/* 4. Correct vertical align in firefox and add space for arrow */
 select {
   -moz-appearance: none; /* 1 */
   -webkit-appearance: none; /* 2 */
-  height: 2em; /* 3 */
-  vertical-align: bottom; /* 4 */
+  height: 1.987503em; /* 3 */
   color: inherit;
   background-color: #fff;
   background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>');
   background-position: calc(100% - 0.32768em) 50%, 50% 100%;
   background-size: 1.25em 1.25em;
   background-repeat: no-repeat;
-  padding-right: 1.90536em;
+  padding: 0 1.90536em 0 0.32768em; /* 4 */
 }
 
 input,
@@ -151,14 +150,6 @@ select:not([disabled]):focus,
 textarea:not([disabled]):focus,
 video:not(:active):focus {
   outline-offset: 1px;
-  outline: 2px solid #82b1ff;
+  outline: 2px solid #82b1ff; /* GMD Blue A100 */
 }
 
-[contenteditable]:focus:active,
-embed:focus:active,
-iframe:focus:active,
-object:focus:active,
-select:not([disabled]):focus:active,
-textarea:not([disabled]):focus:active {
-  outline: none;
-}
