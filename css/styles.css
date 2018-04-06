@@ -59,7 +59,9 @@ h2 {
   margin: 0.8em 0;
 }
 
-h3 {
+/* Set legend font-size and margins as h3 */
+h3,
+legend {
   font-size: 1.25em;
   margin: 1em 0;
 }
@@ -151,6 +153,21 @@ textarea:not([disabled]):focus,
 video:not(:active):focus {
   outline-offset: 1px;
   outline: 2px solid #82b1ff; /* GMD Blue A100 */
+}
+
+/* Reset fieldset styles in all browsers */
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Set legend as heading block element */
+legend {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+  display: block;
+  font-weight: bold;
 }
 
 /* ========== LAYOUT ========== */
