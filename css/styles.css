@@ -163,3 +163,30 @@ body {
   background-image: linear-gradient(to bottom right,#fff,#eceff1);
 }
 
+.header {
+  background-color: #263238; /* GMD Blue Grey 900 */
+}
+
+.header h1,
+.inside .header {
+  margin: 0;
+  padding: 0.8em 0;
+  font-size: 1.25em;
+  font-weight: 200;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.header h1 a[href],
+.inside .header a[href] {
+  color: #fff;
+  text-align: center;
+  padding: 0.4096em 0;
+}
+
+.header h1 a[href]:hover,
+.inside .header a[href]:hover {
+  color: #448aff; /* GMD Blue A200 */
+  text-decoration: none;
+}
