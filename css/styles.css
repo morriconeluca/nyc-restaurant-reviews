@@ -163,6 +163,8 @@ body {
   background-image: linear-gradient(to bottom right,#fff,#eceff1);
 }
 
+/* ========== .header ========== */
+
 .header {
   background-color: #263238; /* GMD Blue Grey 900 */
 }
@@ -189,4 +191,12 @@ body {
 .inside .header a[href]:hover {
   color: #448aff; /* GMD Blue A200 */
   text-decoration: none;
+}
+
+/* ========== #map ========== */
+
+#map {
+  height: calc(100vh - 64px);
+  width: 100%;
+  background-color: #cfd8dc; /* GMD Blue Grey 100 */
 }
