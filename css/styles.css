@@ -225,3 +225,29 @@ body {
   width: 100%;
   background-color: #e5e3df; /* Google Map default background */
 }
+
+/* ========== #footer ========== */
+
+#footer {
+  background-color: #263238; /* GMD Blue Grey 900 */
+  color: #bdbdbd;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  padding: 1.5625em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#footer p {
+  margin: 0;
+}
+
+#footer a[href] {
+  color: #ffd740; /* GMD Amber A200 */
+  padding: 1.25em 0;
+}
+
+#footer a[href]:hover {
+  color: #448aff; /* GMD Blue A200 */
+  text-decoration: none;
+}
