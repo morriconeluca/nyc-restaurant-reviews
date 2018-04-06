@@ -172,7 +172,7 @@ body {
 .header h1,
 .inside .header {
   margin: 0;
-  padding: 0.8em 0;
+  padding: 0.8em 0.8rem;
   font-size: 1.25em;
   font-weight: 200;
   letter-spacing: 0.2em;
@@ -193,10 +193,35 @@ body {
   text-decoration: none;
 }
 
+/* ========== #breadcrumb ========== */
+
+#breadcrumb {
+  margin: 0;
+  padding: 1em 0.8rem;
+  list-style: none;
+  text-align: center;
+  background-color: #e5e3df; /* Google Map default background */
+}
+
+/* Display list items side by side */
+#breadcrumb li {
+  display: inline;
+}
+
+/* Add a slash symbol (/) before/behind each list item */
+#breadcrumb li+li:before {
+  margin: 0 0.512em;
+  content: "/\00a0";
+}
+
+#breadcrumb li a[href] {
+  padding: 0.64em 0;
+}
+
 /* ========== #map ========== */
 
 #map {
   height: calc(100vh - 64px);
   width: 100%;
-  background-color: #cfd8dc; /* GMD Blue Grey 100 */
+  background-color: #e5e3df; /* Google Map default background */
 }
