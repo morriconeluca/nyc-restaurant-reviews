@@ -217,7 +217,7 @@ body {
   padding: 1em 0.8rem;
   list-style: none;
   text-align: center;
-  background-color: #e5e3df; /* Google Map default background */
+  background-color: #fff; /* Google Map default background */
 }
 
 /* Display list items side by side */
@@ -244,16 +244,22 @@ body {
   background-color: #e5e3df; /* Google Map default background */
 }
 
+.inside #map {
+  height: calc(100vh - 122px);
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
+}
+
 /* ========== .filter-options ========== */
 
 .filter-options {
   text-align: center;
   padding: 1em 0.8rem;
-  background-color: #607d8b; /* GMD Red 900 */
-  background-image: -webkit-gradient(linear,left top, right bottom,from(#90a4ae),to(#607d8b));
-  background-image: -webkit-linear-gradient(top left,#90a4ae,#607d8b);
-  background-image: -o-linear-gradient(top left,#90a4ae,#607d8b);
-  background-image: linear-gradient(to bottom right,#90a4ae,#607d8b);
+  background-color: #78909c; /* GMD Blue Grey 400 */
+  background-image: -webkit-gradient(linear,left top, right bottom,from(#64b5f6),to(#78909c));
+  background-image: -webkit-linear-gradient(top left,#64b5f6,#78909c);
+  background-image: -o-linear-gradient(top left,#64b5f6,#78909c);
+  background-image: linear-gradient(to bottom right,#64b5f6,#78909c);
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
 }
 
 #filter-legend {
@@ -273,6 +279,13 @@ body {
 
 .filter-options select:not([disabled]):focus {
   outline-color: #fff;
+}
+
+/* ========== #restaurants-list ========== */
+
+#restaurants-list {
+  padding: 0;
+  list-style: none;
 }
 
 /* ========== #footer ========== */
