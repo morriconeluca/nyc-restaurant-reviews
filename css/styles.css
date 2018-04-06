@@ -153,3 +153,13 @@ video:not(:active):focus {
   outline: 2px solid #82b1ff; /* GMD Blue A100 */
 }
 
+/* ========== LAYOUT ========== */
+
+body {
+  background-color: #eceff1; /* GMD Blue Grey 50 */
+  background-image: -webkit-gradient(linear,left top, right bottom,from(#fff),to(#eceff1));
+  background-image: -webkit-linear-gradient(top left,#fff,#eceff1);
+  background-image: -o-linear-gradient(top left,#fff,#eceff1);
+  background-image: linear-gradient(to bottom right,#fff,#eceff1);
+}
+
