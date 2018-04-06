@@ -232,6 +232,7 @@ body {
 }
 
 #breadcrumb li a[href] {
+  font-weight: bold;
   padding: 0.64em 0;
 }
 
@@ -241,6 +242,37 @@ body {
   height: calc(100vh - 64px);
   width: 100%;
   background-color: #e5e3df; /* Google Map default background */
+}
+
+/* ========== .filter-options ========== */
+
+.filter-options {
+  text-align: center;
+  padding: 1em 0.8rem;
+  background-color: #607d8b; /* GMD Red 900 */
+  background-image: -webkit-gradient(linear,left top, right bottom,from(#90a4ae),to(#607d8b));
+  background-image: -webkit-linear-gradient(top left,#90a4ae,#607d8b);
+  background-image: -o-linear-gradient(top left,#90a4ae,#607d8b);
+  background-image: linear-gradient(to bottom right,#90a4ae,#607d8b);
+}
+
+#filter-legend {
+  color: #fff;
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0 0 1em;
+}
+
+.filter-options select {
+  width: 100%;
+}
+
+.filter-options select + select {
+  margin-top: 0.8em;
+}
+
+.filter-options select:not([disabled]):focus {
+  outline-color: #fff;
 }
 
 /* ========== #footer ========== */
