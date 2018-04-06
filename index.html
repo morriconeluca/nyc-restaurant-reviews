@@ -24,15 +24,15 @@
       <div id="map"></div>
     </section>
     <section>
-      <fieldset class="filter-options">
-          <legend id="filter-legend">Filter Results</legend>
-          <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Select a neighborhood" aria-describedby="filter-legend">
-            <option value="all">All Neighborhoods</option>
-          </select>
-          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" aria-label="Select a cuisine" aria-describedby="filter-legend">
-            <option value="all">All Cuisines</option>
-          </select>
-        </fieldset>
+      <div class="filter-options" role="group" aria-labelledby="filter-legend">
+        <p id="filter-legend">Filter Results</p>
+        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Select a neighborhood" aria-describedby="filter-legend">
+          <option value="all">All Neighborhoods</option>
+        </select>
+        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" aria-label="Select a cuisine" aria-describedby="filter-legend">
+          <option value="all">All Cuisines</option>
+        </select>
+      </div>
       <ul id="restaurants-list"></ul>
     </section>
   </main>
