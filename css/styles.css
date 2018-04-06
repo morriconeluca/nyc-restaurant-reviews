@@ -254,11 +254,7 @@ body {
 .filter-options {
   text-align: center;
   padding: 1em 0.8rem;
-  background-color: #78909c; /* GMD Blue Grey 400 */
-  background-image: -webkit-gradient(linear,left top, right bottom,from(#64b5f6),to(#78909c));
-  background-image: -webkit-linear-gradient(top left,#64b5f6,#78909c);
-  background-image: -o-linear-gradient(top left,#64b5f6,#78909c);
-  background-image: linear-gradient(to bottom right,#64b5f6,#78909c);
+  background-color: #263238; /* GMD Blue Grey 900 */
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
 }
 
@@ -275,10 +271,6 @@ body {
 
 .filter-options select + select {
   margin-top: 0.8em;
-}
-
-.filter-options select:not([disabled]):focus {
-  outline-color: #fff;
 }
 
 /* ========== #restaurants-list ========== */
