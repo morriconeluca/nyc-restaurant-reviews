@@ -72,12 +72,18 @@ ul {
   list-style-position: inside;
 }
 
+/* 1. Make responsive images and objects */
 img,
 embed,
 object,
 video {
-  max-width: 100%;
+  max-width: 100%; /* 1 */
   vertical-align: middle;
+}
+
+/* Reset figure margins in all browsers */
+figure {
+  margin: 0;
 }
 
 button,
