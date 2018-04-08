@@ -19,10 +19,10 @@
     <h1><a href="/" title="Click to refresh the page" aria-label="Restaurant Reviews: Refresh the page">Restaurant Reviews</a></h1>
   </header>
 
-  <main id="maincontent">
+  <main id="main-content">
     <figure id="map"></figure>
     <section class="filter-options" role="group" aria-labelledby="filter-legend">
-      <p id="filter-legend">Filter Results</p>
+      <h2 id="filter-legend">Filter Options</h2>
       <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Select a neighborhood" aria-describedby="filter-legend">
         <option value="all">All Neighborhoods</option>
       </select>
@@ -30,7 +30,9 @@
         <option value="all">All Cuisines</option>
       </select>
     </section>
-    <ul id="restaurants-list"></ul>
+    <section class="results">
+      <ul id="restaurants-list"></ul>
+    </section>
   </main>
 
   <footer id="footer">
