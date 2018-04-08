@@ -45,7 +45,7 @@ a[href]:hover:active {
   text-decoration: none;
 }
 
-a[href]:active {
+a[href]:not(.button):active {
   background-color: rgba(68,138,255,0.4096); /* GMD Blue A200 */
 }
 
@@ -86,13 +86,15 @@ figure {
   margin: 0;
 }
 
+/* 1. Correct line-height in select element */
+.button,
 button,
 input,
 select,
 textarea {
   font-size: 1.25em;
-  line-height: 1.25;
-  padding: 0.512em;
+  line-height: 1.5625; /* 1 */
+  padding: 0.32768em 0.8em;
 }
 
 optgroup,
@@ -122,20 +124,69 @@ select::-ms-expand {
 select {
   -moz-appearance: none; /* 1 */
   -webkit-appearance: none; /* 2 */
-  height: 2.341176em; /* 3 */
+  height: 2.301468em; /* 3 */
   color: inherit;
   background-color: #fff;
   background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>');
-  background-position: calc(100% - 0.32768em) 50%, 50% 100%;
+  background-position: calc(100% - 0.8em) 50%, 50% 100%;
   background-size: 1.25em 1.25em;
   background-repeat: no-repeat;
-  padding: 0 1.90536em 0 0.32768em; /* 4 */
+  padding: 0 2.85em 0 0.8em; /* 4 */
 }
 
 input,
 textarea,
 select {
   border: 1px solid #cfd8dc; /* GMD Blue Grey 100 */
+}
+
+.button {
+  display: inline-block;
+  text-align: center;
+}
+
+.button,
+a[href].button,
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  color: #fff;
+  border: 2px solid #2962ff; /* GMD Blue A700 */
+  background-color: #2962ff; /* GMD Blue A700 */
+  border-radius: 0.125em;
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2);
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  cursor: pointer;
+}
+
+.button:hover,
+a[href].button:hover,
+button:not([disabled]):hover,
+html [type="button"]:not([disabled]):hover,
+[type="reset"]:not([disabled]):hover,
+[type="submit"]:not([disabled]):hover {
+  border: 2px solid #1565c0; /* GMD Blue 800 */
+  background-color: #1565c0; /* GMD Blue 800 */
+  box-shadow: 0 0.125em 0.125em rgba(55,71,79,0.32768);
+}
+
+.button:active,
+a[href].button:active,
+button:not([disabled]):active,
+html [type="button"]:not([disabled]):active,
+[type="reset"]:not([disabled]):active,
+[type="submit"]:not([disabled]):active {
+  border: 2px solid #0d47a1; /* GMD Blue 900 */
+  background-color: #0d47a1; /* GMD Blue 900 */
+  -webkit-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  transform: scale(0.9);
 }
 
 button:-moz-focusring,
@@ -159,6 +210,12 @@ textarea:not([disabled]):focus,
 video:not(:active):focus {
   outline-offset: 1px;
   outline: 2px solid #82b1ff; /* GMD Blue A100 */
+}
+
+html [disabled],
+a:not([href]) {
+  opacity: 0.4096;
+  cursor: not-allowed;
 }
 
 /* Reset fieldset styles in all browsers */
@@ -197,7 +254,7 @@ body {
   margin: 0;
   padding: 1em 1rem;
   font-size: 1.25em;
-  font-weight: 200;
+  font-weight: normal;
   letter-spacing: 0.2em;
   text-align: center;
   text-transform: uppercase;
@@ -260,7 +317,7 @@ body {
 .filter-options {
   text-align: center;
   padding: 1.25em 1rem;
-  background-color: #263238; /* GMD Blue Grey 900 */
+  background-color: #1976d2; /* GMD Blue 700 */
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
 }
 
@@ -275,6 +332,10 @@ body {
 
 .filter-options select + select {
   margin-top: 0.8em;
+}
+
+.filter-options select:not([disabled]):focus {
+  outline-color: #fff;
 }
 
 /* ========== .results ========== */
@@ -301,7 +362,7 @@ body {
 }
 
 #restaurants-list article> h3 {
-  font-weight: 200;
+  font-weight: normal;
   text-transform: uppercase;
 }
 
@@ -311,6 +372,10 @@ body {
 
 #restaurants-list article strong {
   text-transform: uppercase;
+}
+
+#restaurants-list a[href].button {
+  border-radius: 1.25em;
 }
 
 /* ========== #footer ========== */
@@ -330,7 +395,7 @@ body {
 }
 
 #footer a[href] {
-  color: #ffd740; /* GMD Amber A200 */
+  color: #fff;
   padding: 1.25em 0;
 }
 
