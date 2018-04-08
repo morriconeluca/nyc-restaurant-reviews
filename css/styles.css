@@ -279,11 +279,40 @@ body {
   margin-top: 0.8em;
 }
 
-/* ========== #restaurants-list ========== */
+/* ========== .results ========== */
+
+.results {
+  padding: 0 0.4rem;
+}
 
 #restaurants-list {
   padding: 0;
   list-style: none;
+}
+
+#restaurants-list li {
+  margin: 2.441406em 0;
+  padding: 0 0.4em;
+}
+
+#restaurants-list article {
+  background-color: #fff;
+  overflow: hidden;
+  border-radius: 1.953125em 0;
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
+}
+
+#restaurants-list article> h3 {
+  font-weight: 200;
+  text-transform: uppercase;
+}
+
+#restaurants-list article> :not(img) {
+  padding: 0 0.8rem;
+}
+
+#restaurants-list article strong {
+  text-transform: uppercase;
 }
 
 /* ========== #footer ========== */
