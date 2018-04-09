@@ -10,17 +10,19 @@
   <title>Restaurant Reviews</title>
 
   <link rel="stylesheet" href="css/normalize.css" />
-  <!-- <link rel="stylesheet" href="css/styles.bk.css"> -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
   <header class="header">
     <h1><a href="/" title="Click to refresh the page">Restaurant Reviews</a></h1>
   </header>
 
+  <figure id="map"></figure>
+
   <main id="main-content" role="main">
-    <figure id="map"></figure>
     <section class="filter-options" role="group" aria-labelledby="filter-legend">
       <h2 id="filter-legend">Filter Results</h2>
       <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Select a neighborhood" aria-describedby="filter-legend">
