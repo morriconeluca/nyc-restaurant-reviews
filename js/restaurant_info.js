@@ -78,8 +78,9 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
   for (let key in operatingHours) {
     const row = document.createElement('tr');
 
-    const day = document.createElement('td');
+    const day = document.createElement('th');
     day.innerHTML = key;
+    day.scope = 'row';
     row.appendChild(day);
 
     const time = document.createElement('td');

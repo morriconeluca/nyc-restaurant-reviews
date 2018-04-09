@@ -159,7 +159,7 @@ button,
   border: 2px solid #2962ff; /* GMD Blue A700 */
   background-color: #2962ff; /* GMD Blue A700 */
   border-radius: 0.125em;
-  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2);
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
   cursor: pointer;
 }
 
@@ -203,7 +203,7 @@ html [type="button"]:not([disabled]):hover,
 [type="submit"]:not([disabled]):hover {
   border: 2px solid #1565c0; /* GMD Blue 800 */
   background-color: #1565c0; /* GMD Blue 800 */
-  box-shadow: 0 0.125em 0.125em rgba(55,71,79,0.32768);
+  box-shadow: 0 0.125em 0.125em rgba(55,71,79,0.32768); /* GMD Blue Grey 800 */
 }
 
 .skip-link:focus {
@@ -262,19 +262,41 @@ a:not([href]) {
   cursor: not-allowed;
 }
 
-/* Reset fieldset styles in all browsers */
-fieldset {
-  margin: 0;
-  padding: 0;
-  border: none;
+table {
+  font-size: 0.8em;
+  line-height: 1.5625;
+  background-color: #fff;
+  border-collapse: collapse;
+  border-spacing: 0;
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+  margin: 1.25em 0;
 }
 
-/* Set legend as heading block element */
-legend {
-  -webkit-box-sizing: inherit;
-  box-sizing: inherit;
-  display: block;
-  font-weight: bold;
+td,
+th {
+  padding: 1.25em;
+}
+
+[dir=rtl] th,
+td,
+tfoot th,
+thead th {
+  text-align: left;
+}
+
+[dir=rtl] td,
+[dir=rtl] tfoot th,
+[dir=rtl] thead th,
+th {
+  text-align: right;
+}
+
+tr:nth-of-type(even) {
+  background-color: rgba(68,138,255,0.2); /* GMD Blue A200 */
+}
+
+table caption {
+  margin-bottom: 1.25em;
 }
 
 /* ========== LAYOUT ========== */
@@ -353,7 +375,7 @@ body {
 
 .inside #map {
   height: calc(100vh - 7.764706rem);
-  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 /* ========== .filter-options ========== */
@@ -362,7 +384,7 @@ body {
   text-align: center;
   padding: 1.25em 1rem;
   background-color: #1976d2; /* GMD Blue 700 */
-  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #filter-legend {
@@ -402,7 +424,7 @@ body {
   background-color: #fff;
   overflow: hidden;
   border-radius: 1.953125em 0;
-  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,.2);
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #restaurants-list article> h3 {
@@ -420,6 +442,45 @@ body {
 
 #restaurants-list a[href].button {
   border-radius: 1.25em;
+}
+
+/* ========== #restaurant-container ========== */
+
+#restaurant-container {
+  padding: 2.441406em 1rem;
+}
+
+#restaurant-name {
+  margin-top: 0;
+  letter-spacing: 0.125em;
+  text-transform: uppercase;
+}
+
+#restaurant-container figure {
+  margin: 1em 0;
+  overflow: hidden;
+  border-radius: 1.953125em 0;
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
+#restaurant-cuisine {
+  color: #fff;
+  margin: 0;
+  padding: 0.8em;
+  font-size: 1.25em;
+  text-align: center;
+  background-color: #263238; /* GMD Blue Grey 900 */
+}
+
+#restaurant-hours {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+#restaurant-hours caption {
+  font-size: 1.25em;
+  font-weight: bold;
+  text-align: left;
 }
 
 /* ========== #footer ========== */
