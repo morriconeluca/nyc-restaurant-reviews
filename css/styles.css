@@ -177,6 +177,22 @@ button,
   transform: scale(1);
 }
 
+.skip-link {
+  position: absolute;
+  top: 0.413882em;
+  left: 1rem;
+  z-index: 700000;
+  -webkit-transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
+  transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
+  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,end);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,end);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
+  -webkit-transform: translateY(-3em);
+  -ms-transform: translateY(-3em);
+  transform: translateY(-3em);
+  opacity: 0;
+}
+
 .button:hover,
 .skip-link:hover,
 a[href].button:hover,
@@ -188,6 +204,18 @@ html [type="button"]:not([disabled]):hover,
   border: 2px solid #1565c0; /* GMD Blue 800 */
   background-color: #1565c0; /* GMD Blue 800 */
   box-shadow: 0 0.125em 0.125em rgba(55,71,79,0.32768);
+}
+
+.skip-link:focus {
+  -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,start);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .button:active,
@@ -259,36 +287,6 @@ body {
   background-image: linear-gradient(to bottom right,#fff,#eceff1);
 }
 
-/* ========== .skip-link ========== */
-
-.skip-link {
-  position: absolute;
-  top: 0.413882em;
-  left: 1rem;
-  z-index: 700000;
-  -webkit-transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
-  transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
-  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,end);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,end);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
-  -webkit-transform: translateY(-3em);
-  -ms-transform: translateY(-3em);
-  transform: translateY(-3em);
-  opacity: 0;
-}
-
-.skip-link:focus {
-  -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
-  transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
-  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,start);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
-  -webkit-transform: translateY(0);
-  -ms-transform: translateY(0);
-  transform: translateY(0);
-  opacity: 1;
-}
-
 /* ========== .header ========== */
 
 .header {
@@ -296,7 +294,7 @@ body {
 }
 
 .header h1,
-.inside .header {
+.inside .header h2 {
   margin: 0;
   padding: 1em 1rem;
   font-size: 1.25em;
@@ -307,14 +305,14 @@ body {
 }
 
 .header h1 a[href],
-.inside .header a[href] {
+.inside .header h2 a[href] {
   color: #fff;
   text-align: center;
   padding: 0.512em 0;
 }
 
 .header h1 a[href]:hover,
-.inside .header a[href]:hover {
+.inside .header h2 a[href]:hover {
   color: #448aff; /* GMD Blue A200 */
   text-decoration: none;
 }
