@@ -408,17 +408,26 @@ body {
 /* ========== .results ========== */
 
 .results {
+  padding: 1em 0.5rem;
+}
+
+#results-notice {
+  margin: 1em 0 0;
   padding: 0 0.5rem;
+  font-size: 1.25em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 #restaurants-list {
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 #restaurants-list li {
-  margin: 2.441406em 0;
-  padding: 0 0.5rem;
+  margin: 0;
+  padding: 1em 0.5rem;
 }
 
 #restaurants-list article {
@@ -441,6 +450,11 @@ body {
   text-transform: uppercase;
 }
 
+#restaurants-list article p:last-child {
+  margin-top: 1.5625em;
+  text-align: right;
+}
+
 #restaurants-list a[href].button {
   border-radius: 1.25em;
 }
@@ -448,12 +462,14 @@ body {
 /* ========== #restaurant-container ========== */
 
 #restaurant-container {
-  padding: 2.441406em 1rem;
+  padding: 1em 1rem;
 }
 
 #restaurant-name {
-  margin-top: 0;
-  letter-spacing: 0.125em;
+  margin: 1em 0;
+  padding: 0 0.5rem;
+  font-size: 1.25em;
+  text-align: center;
   text-transform: uppercase;
 }
 
