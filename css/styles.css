@@ -253,7 +253,7 @@ video:not(:active):focus {
 }
 
 html [disabled],
-a:not([href]) {
+a:not([href]):not([rel]) {
   opacity: 0.4096;
   cursor: not-allowed;
 }
