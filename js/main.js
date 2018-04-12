@@ -165,8 +165,10 @@ createRestaurantHTML = (restaurant) => {
   neighborhood.innerHTML = `<strong>${restaurant.neighborhood}</strong>`;
   article.append(neighborhood);
 
-  const address = document.createElement('p');
+  const address = document.createElement('address');
+  const addressInner = document.createElement('p');
   address.innerHTML = restaurant.address;
+  address.append(addressInner);
   article.append(address);
 
   const moreContainer = document.createElement('p');
