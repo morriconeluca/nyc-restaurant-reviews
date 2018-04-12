@@ -19,12 +19,13 @@
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <!-- Beginning nav -->
-  <nav>
-    <header class="header">
+  <nav aria-label="Banner and breadcrumb">
+      <!-- The HTML5 header element is not considered a banner landmark when it is descendant of nav. https://www.w3.org/TR/2017/NOTE-wai-aria-practices-1.1-20171214/examples/landmarks/banner.html -->
+    <header class="header" role="banner">
       <h2><a href="/" title="Go back to homepage">Restaurant Reviews</a></h2>
     </header>
     <!-- Beginning breadcrumb -->
-    <ol id="breadcrumb" aria-label="Breadcrumb">
+    <ol id="breadcrumb">
       <li><a href="/" title="Go back to homepage">Home</a></li>
     </ol>
     <!-- End breadcrumb -->
@@ -32,7 +33,7 @@
   <!-- End nav -->
 
   <!-- Beginning map -->
-  <figure id="map"></figure>
+  <figure id="map" role="application" aria-label="Google Maps shows where is the restaurant" tabindex="0"></figure>
   <!-- End map -->
 
   <!-- Beginning main -->
