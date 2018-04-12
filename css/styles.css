@@ -288,7 +288,7 @@ th {
 }
 
 tr:nth-of-type(even) {
-  background-color: rgba(68,138,255,0.2); /* GMD Blue A200 */
+  background-color: rgba(144,164,174,0.2); /* GMD Blue Grey 300 */
 }
 
 table caption {
@@ -467,9 +467,7 @@ body {
 
 #restaurant-name {
   margin: 1em 0;
-  padding: 0 0.5rem;
   font-size: 1.25em;
-  text-align: center;
   text-transform: uppercase;
 }
 
@@ -481,7 +479,7 @@ body {
 }
 
 #restaurant-cuisine {
-  color: #fff;
+  color: #bdbdbd; /* GMD Grey 400 */
   margin: 0;
   padding: 0.8em;
   font-size: 1.25em;
@@ -500,14 +498,84 @@ body {
   text-align: left;
 }
 
+/* ========== #reviews-container ========== */
+
+#reviews-container {
+  padding: 1em 0.5rem;
+}
+
+#reviews-container h2 {
+  margin: 1em 0 0;
+  padding: 0 0.5rem;
+  font-size: 1.25em;
+  text-transform: uppercase;
+}
+
+#reviews-container> p {
+  padding: 0 0.5rem;
+}
+
+#reviews-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#reviews-list li {
+  margin: 0;
+  padding: 1em 0.5rem;
+}
+
+#reviews-list article {
+  background-color: #fff;
+  overflow: hidden;
+  border-radius: 1.953125em 0;
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
+#reviews-list article header {
+  padding:  1em;
+  color: #bdbdbd; /* GMD Grey 400 */
+  background-color: #263238; /* GMD Blue Grey 900 */
+}
+
+#reviews-list article header p {
+  margin: 0;
+}
+
+#reviews-list article header [rel="author"] {
+  font-size: 1.25em;
+}
+
+#reviews-list article header time {
+  float: right;
+  margin-top: 0.25em;
+}
+
+#reviews-list article header p::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+#reviews-list article> p {
+  padding: 0 1rem;
+}
+
+abbr.stars {
+  font-size: 1.25em;
+  text-decoration: none;
+  color: #ffab00; /* GMD Amber A700 */
+}
+
 /* ========== #footer ========== */
 
 #footer {
   background-color: #263238; /* GMD Blue Grey 900 */
-  color: #bdbdbd;
+  color: #bdbdbd; /* GMD Grey 400 */
   font-size: 0.8em;
   letter-spacing: 0.05em;
-  padding: 1.5625em;
+  padding: 1.5625em 1rem;
   text-align: center;
   text-transform: uppercase;
 }

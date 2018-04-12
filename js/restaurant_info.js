@@ -136,9 +136,17 @@ createReviewHTML = (review) => {
   header.appendChild(headerInner);
   article.appendChild(header);
 
-  const rating = document.createElement('p');
-  rating.innerHTML = `Rating: ${review.rating}`;
-  article.appendChild(rating);
+  const ratingContainer = document.createElement('p');
+  const rating = document.createElement('abbr');
+  let stars = '';
+  for (let i = 0; i < review.rating; i++ ) {
+    stars += '★';
+  }
+  rating.innerHTML = stars;
+  rating.className = 'stars';
+  rating.title = `Rating: ${review.rating} of 5`;
+  ratingContainer.appendChild(rating);
+  article.appendChild(ratingContainer);
 
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
