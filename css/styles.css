@@ -36,16 +36,16 @@ a[href] {
   border-radius: 0.125em;
 }
 
-a[href]:not(.button):not(.skip-link):hover {
+a[href]:not(.button):hover {
   text-decoration: underline;
 }
 
-a[href]:focus,
-a[href]:hover:active {
+a[href]:not(.button):focus,
+a[href]:not(.button):active {
   text-decoration: none;
 }
 
-a[href]:not(.button):not(.skip-link):active {
+a[href]:not(.button):active {
   background-color: rgba(68,138,255,0.4096); /* GMD Blue A200 */
 }
 
@@ -141,16 +141,13 @@ select {
   border: 1px solid #cfd8dc; /* GMD Blue Grey 100 */
 }
 
-.button,
-.skip-link {
+.button {
   display: inline-block;
   text-align: center;
 }
 
 .button,
-.skip-link,
 a[href].button,
-a[href].skip-link,
 button,
 [type="button"],
 [type="reset"],
@@ -163,8 +160,8 @@ button,
   cursor: pointer;
 }
 
-.button,
-a[href].button,
+:not(.skip-link).button,
+a[href]:not(.skip-link).button,
 button,
 [type="button"],
 [type="reset"],
@@ -179,24 +176,20 @@ button,
 
 .skip-link {
   position: absolute;
-  top: 0.413882em;
-  left: 1rem;
-  z-index: 700000;
+  opacity: 0;
+  z-index: 100;
   -webkit-transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
   transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
   -o-transition: transform 0.3s ease, opacity 0.3s steps(1,end);
   transition: transform 0.3s ease, opacity 0.3s steps(1,end);
   transition: transform 0.3s ease, opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
-  -webkit-transform: translateY(-3em);
-  -ms-transform: translateY(-3em);
-  transform: translateY(-3em);
-  opacity: 0;
+  -webkit-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0);
 }
 
 .button:hover,
-.skip-link:hover,
 a[href].button:hover,
-a[href].skip-link:hover,
 button:not([disabled]):hover,
 html [type="button"]:not([disabled]):hover,
 [type="reset"]:not([disabled]):hover,
@@ -207,21 +200,19 @@ html [type="button"]:not([disabled]):hover,
 }
 
 .skip-link:focus {
+  opacity: 1;
   -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
   transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
   -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
   transition: transform 0.3s ease, opacity 0.3s steps(1,start);
   transition: transform 0.3s ease, opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
-  -webkit-transform: translateY(0);
-  -ms-transform: translateY(0);
-  transform: translateY(0);
-  opacity: 1;
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
 }
 
 .button:active,
-.skip-link:active,
 a[href].button:active,
-a[href].skip-link:active,
 button:not([disabled]):active,
 html [type="button"]:not([disabled]):active,
 [type="reset"]:not([disabled]):active,
@@ -233,6 +224,10 @@ html [type="button"]:not([disabled]):active,
   transform: scale(0.9);
 }
 
+:focus {
+  outline: none;
+}
+
 button:-moz-focusring,
 [type="button"]:-moz-focusring,
 [type="reset"]:-moz-focusring,
@@ -241,6 +236,7 @@ button:-moz-focusring,
 }
 
 [contenteditable]:focus,
+[tabindex]:focus,
 a[href]:not(:active):focus,
 area[href]:not(:active):focus,
 audio:not(:active):focus,
@@ -307,6 +303,11 @@ body {
   background-image: -webkit-linear-gradient(top left,#fff,#eceff1);
   background-image: -o-linear-gradient(top left,#fff,#eceff1);
   background-image: linear-gradient(to bottom right,#fff,#eceff1);
+}
+
+.skip-link {
+  top: 0.413972em;
+  left: 1rem;
 }
 
 /* ========== .header ========== */
