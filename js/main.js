@@ -125,10 +125,22 @@ resetRestaurants = (restaurants) => {
  * Create all restaurants HTML and add them to the webpage.
  */
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
-  const ul = document.getElementById('restaurants-list');
-  restaurants.forEach(restaurant => {
-    ul.append(createRestaurantHTML(restaurant));
-  });
+  const notice = document.getElementById('results-notice');
+  let result = '';
+  if (!restaurants.length) {
+    result = 'No restaurants found';
+  } else {
+    const ul = document.getElementById('restaurants-list');
+    let counter = 0;
+    restaurants.forEach(restaurant => {
+      ul.append(createRestaurantHTML(restaurant));
+      counter++;
+    });
+    let s = (counter > 1) ? 's' : '';
+    result = `${counter} restaurant${s} found`;
+  }
+  notice.innerHTML = result;
+
   addMarkersToMap();
 }
 
