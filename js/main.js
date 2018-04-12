@@ -141,6 +141,7 @@ createRestaurantHTML = (restaurant) => {
 
   const image = document.createElement('img');
   image.className = 'restaurant-img';
+  image.alt = restaurant.name;
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   article.append(image);
 
@@ -168,7 +169,7 @@ createRestaurantHTML = (restaurant) => {
   li.append(article);
 
   return li;
-};
+}
 
 /**
  * Add markers for current restaurants to the map.
@@ -178,7 +179,7 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     // Add marker to the map
     const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
     google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url
+      window.location.href = marker.url;
     });
     self.markers.push(marker);
   });

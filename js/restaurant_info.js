@@ -56,7 +56,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   address.innerHTML = restaurant.address;
 
   const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img'
+  image.className = 'restaurant-img';
+  image.alt = restaurant.name;
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
   const cuisine = document.getElementById('restaurant-cuisine');
@@ -145,9 +146,8 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
   const li = document.createElement('li');
   const a = document.createElement('a');
   const url = window.location.pathname + window.location.search;
-  a.setAttribute('href', url );
-  a.setAttribute('title', 'Refresh the page' );
-  a.setAttribute('aria-label', `${restaurant.name}: Click to refresh`);
+  a.href = url;
+  a.title = 'Click to refresh the page';
   a.setAttribute('aria-current', 'page' );
   a.innerHTML = restaurant.name;
   li.appendChild(a);
