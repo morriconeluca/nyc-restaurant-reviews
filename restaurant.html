@@ -18,15 +18,20 @@
 <body class="inside">
   <a class="skip-link button" href="#main-content">Skip to main content</a>
 
+  <!-- The HTML5 header element is not considered a banner landmark when it is descendant of nav. https://www.w3.org/TR/2017/NOTE-wai-aria-practices-1.1-20171214/examples/landmarks/banner.html -->
+  <div role="banner">
+      <!-- Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute -->
+      <!-- The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ -->
+      <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. -->
+    <strong><a href="/">Restaurant Reviews</a></strong>
+  </div>
+
   <!-- Beginning nav -->
-  <nav aria-label="Banner and breadcrumb">
-    <!-- The HTML5 header element is not considered a banner landmark when it is descendant of nav. https://www.w3.org/TR/2017/NOTE-wai-aria-practices-1.1-20171214/examples/landmarks/banner.html -->
-    <header class="header" role="banner">
-      <h2><a href="/" title="Go back to homepage">Restaurant Reviews</a></h2>
-    </header>
+  <nav aria-label="Breadcrumb">
     <!-- Beginning breadcrumb -->
     <ol id="breadcrumb">
-      <li><a href="/" title="Go back to homepage">Home</a></li>
+      <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. See above. -->
+      <li><a href="/">Home</a></li>
     </ol>
     <!-- End breadcrumb -->
   </nav>
@@ -63,7 +68,8 @@
 
   <!-- Beginning footer -->
   <footer id="footer">
-    <p>Copyright © <script>document.write(new Date().getFullYear());</script> <a href="/" title="Go back to homepage"><strong>Restaurant Reviews</strong></a>. All Rights Reserved.</p>
+    <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. See above. -->
+    <p>Copyright © <script>document.write(new Date().getFullYear());</script> <strong><a href="/">Restaurant Reviews</a></strong>. All Rights Reserved.</p>
   </footer>
   <!-- End footer -->
 

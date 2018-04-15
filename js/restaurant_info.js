@@ -140,7 +140,8 @@ createReviewHTML = (review) => {
   /* Ratings are often presented either as a set of images or characters, e.g. "***". For these, the <abbr> element is particularly useful, as such characters are an abbreviation for the precise rating, e.g. <abbr class="rating" title="3.0">***</abbr>. http://microformats.org/wiki/hreview */
   const rating = document.createElement('abbr');
   /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
-  /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text, and it's the same for other elements as abbr. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
+  /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
+  /* The title is an HTML global attribute, so it can be used on any HTML element. The screen readers behaviour is the same for all elements with the title attribute. For these reasons, in this case, the inner text node was left blank. The stars are rendered using ::before and ::after pseudo elements. --> */
   rating.title = `Rating: ${review.rating} of 5`;
   rating.className = `stars-${review.rating}`;
   ratingContainer.appendChild(rating);
@@ -164,7 +165,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
   const a = document.createElement('a');
   const url = window.location.pathname + window.location.search;
   a.href = url;
-  a.title = 'Click to refresh the page';
+  /* Here the title attribute is to avoid, and the link text is enough for accessibility. See above about title. */
   a.setAttribute('aria-current', 'page' );
   a.innerHTML = restaurant.name;
   li.appendChild(a);
