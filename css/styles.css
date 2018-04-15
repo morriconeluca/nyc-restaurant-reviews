@@ -176,7 +176,6 @@ button,
 
 .skip-link {
   position: absolute;
-  opacity: 0;
   z-index: 100;
   -webkit-transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
   transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
@@ -200,7 +199,6 @@ html [type="button"]:not([disabled]):hover,
 }
 
 .skip-link:focus {
-  opacity: 1;
   -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
   transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
   -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
@@ -562,10 +560,46 @@ body {
   padding: 0 1rem;
 }
 
-abbr.stars {
+abbr[class|="stars"] {
   font-size: 1.25em;
+  color: #dd2c00; /* GMD Deep Orange A700 */
   text-decoration: none;
-  color: #ffab00; /* GMD Amber A700 */
+}
+
+.stars-1::after {
+  content: "☆☆☆☆";
+}
+
+.stars-1::before {
+  content: "★";
+}
+
+.stars-2::after {
+  content: "☆☆☆";
+}
+
+.stars-2::before {
+  content: "★★";
+}
+
+.stars-3::after {
+  content: "☆☆";
+}
+
+.stars-3::before {
+  content: "★★★";
+}
+
+.stars-4::after {
+  content: "☆";
+}
+
+.stars-4::before {
+  content: "★★★★";
+}
+
+.stars-5::before {
+  content: "★★★★★";
 }
 
 /* ========== #footer ========== */

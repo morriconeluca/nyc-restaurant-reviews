@@ -137,14 +137,12 @@ createReviewHTML = (review) => {
   article.appendChild(header);
 
   const ratingContainer = document.createElement('p');
+  /* Ratings are often presented either as a set of images or characters, e.g. "***". For these, the <abbr> element is particularly useful, as such characters are an abbreviation for the precise rating, e.g. <abbr class="rating" title="3.0">***</abbr>. http://microformats.org/wiki/hreview */
   const rating = document.createElement('abbr');
-  let stars = '';
-  for (let i = 0; i < review.rating; i++ ) {
-    stars += '★';
-  }
-  rating.innerHTML = stars;
-  rating.className = 'stars';
+  /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+  /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text, and it's the same for other elements as abbr. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
   rating.title = `Rating: ${review.rating} of 5`;
+  rating.className = `stars-${review.rating}`;
   ratingContainer.appendChild(rating);
   article.appendChild(ratingContainer);
 
