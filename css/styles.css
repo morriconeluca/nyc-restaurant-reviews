@@ -558,26 +558,24 @@ body> header h1,
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
-#reviews-list article header {
+#reviews-list header {
   padding:  1em;
   color: #bdbdbd; /* GMD Grey 400 */
   background-color: #263238; /* GMD Blue Grey 900 */
 }
 
-#reviews-list article header p {
+#reviews-list h3 {
   margin: 0;
+  font-weight: normal;
 }
 
-#reviews-list article header [rel="author"] {
-  font-size: 1.25em;
-}
-
-#reviews-list article header time {
+#reviews-list time {
   float: right;
+  font-size: 0.8em;
   margin-top: 0.25em;
 }
 
-#reviews-list article header p::after {
+#reviews-list h3::after {
   clear: both;
   content: "";
   display: block;

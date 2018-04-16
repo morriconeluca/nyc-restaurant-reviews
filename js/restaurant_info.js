@@ -129,18 +129,17 @@ createReviewHTML = (review) => {
   const article = document.createElement('article');
 
   const header = document.createElement('header');
-  const headerInner = document.createElement('p');
+  const heading = document.createElement('h3');
 
-  const name = document.createElement('a');
-  name.rel = 'author';
+  const name = document.createElement('span');
   name.innerHTML = review.name;
-  headerInner.appendChild(name);
+  heading.appendChild(name);
 
   const date = document.createElement('time');
   date.innerHTML = review.date;
-  headerInner.appendChild(date);
+  heading.appendChild(date);
 
-  header.appendChild(headerInner);
+  header.appendChild(heading);
   article.appendChild(header);
 
   const ratingContainer = document.createElement('p');
