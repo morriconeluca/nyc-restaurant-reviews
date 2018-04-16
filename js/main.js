@@ -1,8 +1,9 @@
 let restaurants,
   neighborhoods,
-  cuisines
-var map
-var markers = []
+  cuisines,
+  tilesLoaded = false;
+var map;
+var markers = [];
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -115,7 +116,7 @@ resetRestaurants = (restaurants) => {
   const ul = document.getElementById('restaurants-list');
   ul.innerHTML = '';
 
-  // Remove all map markers
+  /* Remove all map markers. When a DOM Element is removed, its listeners are removed from memory too. */
   self.markers.forEach(m => m.setMap(null));
   self.markers = [];
   self.restaurants = restaurants;
@@ -192,6 +193,7 @@ createRestaurantHTML = (restaurant) => {
  * Add markers for current restaurants to the map.
  */
 addMarkersToMap = (restaurants = self.restaurants) => {
+  let urls = [];
   restaurants.forEach(restaurant => {
     // Add marker to the map
     const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
@@ -199,5 +201,47 @@ addMarkersToMap = (restaurants = self.restaurants) => {
       window.location.href = marker.url;
     });
     self.markers.push(marker);
+    urls.push(marker.url);
   });
+  // Create an overlay object for assign an id to markerLayer
+  var gmOverlay = new google.maps.OverlayView();
+  gmOverlay.draw = function () {
+    this.getPanes().markerLayer.id='markerLayer';
+  };
+  gmOverlay.setMap(map);
+  if (!tilesLoaded) {
+    // This event fires when the visible tiles have finished loading.
+    const listenerTiles = google.maps.event.addListener(map, 'tilesloaded', () => {
+      makeMapAccessible(urls);
+      tilesLoaded = true;
+      google.maps.event.removeListener(listenerTiles);
+    });
+  } else {
+    makeMapAccessible(urls);
+  }
+}
+
+function makeMapAccessible(urls) {
+  setTimeout(() => {
+    const areas = document.querySelectorAll('[id^="gmimap"]> area');
+    const layers = document.querySelectorAll('#markerLayer img');
+    for (let i = 0; i < areas.length; i++) {
+      areas[i].tabIndex = 0;
+      areas[i].addEventListener('focus', () => {
+        layers[i].classList.add('focused');
+      });
+      areas[i].addEventListener('blur', () => {
+        layers[i].classList.remove('focused');
+      });
+      areas[i].addEventListener('keydown', (e) => {
+        if (e.keyCode === 13) window.location.href = urls[i];
+      });
+    }
+    if (document.querySelector('#map div[tabindex="0"]')) {
+      document.querySelector('#map div[tabindex="0"]').removeAttribute('tabindex');
+    }
+    const s = (urls.length > 1) ? 's' : '';
+    /* Relying on the title attribute is currently discouraged. See above. However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
+    document.querySelector('#map iframe').title = `Map shows ${urls.length} restaurant${s}`;
+  }, 150);
 }

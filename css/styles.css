@@ -5,7 +5,7 @@
 
 html {
   color: rgba(0,0,0,0.8);
-  font: 17px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font: 17px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   text-rendering: optimizeLegibility;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -293,6 +293,18 @@ table caption {
   margin-bottom: 1.25em;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ========== LAYOUT ========== */
 
 body {
@@ -370,7 +382,11 @@ body> header h1,
   padding: 0.8em 0;
 }
 
-/* ========== #map ========== */
+/* ========== .map-container ========== */
+
+.map-container {
+  position: relative;
+}
 
 #map {
   height: calc(100vh - 4.029412rem);
@@ -381,6 +397,11 @@ body> header h1,
 .inside #map {
   height: calc(100vh - 7.764706rem);
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
+#markerLayer img.focused {
+  border-radius: 0.125em;
+  background-color: rgba(68,138,255,0.8); /* GMD Blue A200 */
 }
 
 /* ========== .filter-options ========== */

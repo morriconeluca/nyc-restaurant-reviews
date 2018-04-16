@@ -16,6 +16,13 @@ window.initMap = () => {
       });
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+      // This event fires when the visible tiles have finished loading.
+      const listenerTiles = google.maps.event.addListener(map, 'tilesloaded', () => {
+        /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+        /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
+        document.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
+        google.maps.event.removeListener(listenerTiles);
+      });
     }
   });
 }
