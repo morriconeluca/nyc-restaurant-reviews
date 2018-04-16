@@ -503,6 +503,11 @@ body> header h1,
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
+#restaurant-img,
+.restaurant-img {
+  width: 100%;
+}
+
 #restaurant-cuisine {
   color: #bdbdbd; /* GMD Grey 400 */
   margin: 0;
