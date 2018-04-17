@@ -517,8 +517,12 @@ body> header h1,
   background-color: #263238; /* GMD Blue Grey 900 */
 }
 
+.scrollable-x {
+  overflow-x: auto;
+}
+
 #restaurant-hours {
-  width: 100%;
+  min-width: 100%;
   margin-bottom: 0;
 }
 
