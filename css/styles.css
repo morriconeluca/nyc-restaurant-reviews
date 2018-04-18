@@ -129,6 +129,7 @@ select {
   color: inherit;
   background-color: #fff;
   background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>');
+  /* background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z" fill="rgba(0,0,0,0.8)"/></svg>'); */
   background-position: calc(100% - 0.8em) 50%, 50% 100%;
   background-size: 1.25em 1.25em;
   background-repeat: no-repeat;
@@ -320,6 +321,10 @@ body {
   left: 1rem;
 }
 
+body:not(.inside) address {
+  font-size: 0.8em;
+}
+
 /* ========== .header ========== */
 
 body> header,
@@ -437,7 +442,7 @@ body> header h1,
 }
 
 #results-notice {
-  margin: 1em 0 0;
+  margin: 1em 0;
   padding: 0 0.5rem;
   font-size: 1.25em;
   text-align: center;
@@ -660,4 +665,93 @@ abbr[class|="stars"] {
 #footer a[href]:hover {
   color: #448aff; /* GMD Blue A200 */
   text-decoration: none;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media screen and (min-width: 700px) {
+  #results-notice {
+    margin: 0.8em 0;
+    font-size: 1.5625em;
+  }
+
+  #restaurants-list {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+
+  #restaurants-list> * {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    width: 50%;
+  }
+}
+
+
+@media screen and (min-width: 768px) {
+  .filter-options .container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .filter-options .container> * {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+  }
+
+  #filter-legend {
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    -ms-flex-preferred-size: auto;
+    flex-basis: auto;
+  }
+
+  #filter-legend,
+  .filter-options select + select {
+    margin: 0;
+  }
+
+  .filter-options .container select {
+    margin-left: 1rem;
+  }
+}
+
+@media screen and (min-width: 1080px) {
+  #restaurants-list> * {
+    width: 33.333333%;
+  }
+}
+
+@media screen and (min-width: 1366px) {
+  .container {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .filter-options .container {
+    max-width: 1332px;
+  }
+
+  .results.container {
+    max-width: 1366px;
+  }
+
+  #restaurants-list> * {
+    width: 25%;
+  }
+
 }
