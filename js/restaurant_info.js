@@ -71,7 +71,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
   const cuisine = document.getElementById('restaurant-cuisine');
-  cuisine.innerHTML = `${restaurant.cuisine_type} Cuisine`;
+  cuisine.innerHTML = `<strong>${restaurant.cuisine_type} Cuisine</strong>`;
 
   // fill operating hours
   if (restaurant.operating_hours) {

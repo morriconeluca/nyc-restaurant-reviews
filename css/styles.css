@@ -263,7 +263,6 @@ table {
   background-color: #fff;
   border-collapse: collapse;
   border-spacing: 0;
-  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
   margin: 1.25em 0;
 }
 
@@ -321,7 +320,7 @@ body {
   left: 1rem;
 }
 
-body:not(.inside) address {
+address {
   font-size: 0.8em;
 }
 
@@ -492,20 +491,19 @@ body> header h1,
 /* ========== #restaurant-container ========== */
 
 #restaurant-container {
-  padding: 1em 1rem;
+  padding: 2.25em 1rem 0;
 }
 
-#restaurant-name {
-  margin: 1em 0;
-  font-size: 1.25em;
-  text-transform: uppercase;
-}
-
-#restaurant-container figure {
-  margin: 1em 0;
+#restaurant-container> div {
   overflow: hidden;
   border-radius: 1.953125em 0;
+  background-color: #fff;
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
+#restaurant-container> div> :not(img):not(figure),
+#restaurant-container> div> figure caption {
+  padding: 0 1rem;
 }
 
 #restaurant-img,
@@ -513,13 +511,15 @@ body> header h1,
   width: 100%;
 }
 
-#restaurant-cuisine {
-  color: #bdbdbd; /* GMD Grey 400 */
-  margin: 0;
-  padding: 0.8em;
+#restaurant-name {
+  margin: 1em 0;
   font-size: 1.25em;
-  text-align: center;
-  background-color: #263238; /* GMD Blue Grey 900 */
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+#restaurant-cuisine strong {
+  text-transform: uppercase;
 }
 
 .scrollable-x {
@@ -529,6 +529,11 @@ body> header h1,
 #restaurant-hours {
   min-width: 100%;
   margin-bottom: 0;
+}
+
+#restaurant-hours td,
+#restaurant-hours th {
+  white-space: nowrap;
 }
 
 #restaurant-hours caption {
@@ -544,9 +549,10 @@ body> header h1,
 }
 
 #reviews-container h2 {
-  margin: 1em 0 0;
+  margin: 1em 0;
   padding: 0 0.5rem;
   font-size: 1.25em;
+  text-align: center;
   text-transform: uppercase;
 }
 
@@ -670,6 +676,10 @@ abbr[class|="stars"] {
 /* ========== RESPONSIVE ========== */
 
 @media screen and (min-width: 700px) {
+  html {
+    line-height: 1.5625;
+  }
+
   #results-notice {
     margin: 0.8em 0;
     font-size: 1.5625em;
