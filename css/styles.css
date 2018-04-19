@@ -367,7 +367,7 @@ body> header h1,
   padding: 1.25em 1rem;
   list-style: none;
   text-align: center;
-  background-color: #fff; /* Google Map default background */
+  background-color: #cfd8dc; /* GMD Blue Grey 100 */
 }
 
 /* Display list items side by side */
@@ -680,12 +680,19 @@ abbr[class|="stars"] {
     line-height: 1.5625;
   }
 
-  #results-notice {
+  body:not(.inside) #map {
+    height: calc(100vh - 4.441177rem);
+  }
+
+  #results-notice,
+  #reviews-container h2 {
     margin: 0.8em 0;
     font-size: 1.5625em;
   }
 
-  #restaurants-list {
+  #restaurants-list,
+  .inside main,
+  #reviews-list {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -693,11 +700,48 @@ abbr[class|="stars"] {
     flex-wrap: wrap;
   }
 
-  #restaurants-list> * {
+  #restaurants-list> *,
+  .inside main> *,
+  #reviews-list> * {
     -webkit-box-flex: 0;
     -ms-flex: 0 1 auto;
     flex: 0 1 auto;
+  }
+
+  #restaurants-list> *,
+  .inside nav,
+  #reviews-list> * {
     width: 50%;
+  }
+
+  #restaurant-container {
+    width: calc(50% + 1rem);
+  }
+
+  .inside .map-container {
+    width: calc(50% - 1rem);
+  }
+
+  #restaurant-container {
+    order: -1;
+  }
+
+  .inside .map-container,
+  #reviews-list> * {
+    -ms-flex-item-align: stretch;
+    align-self: stretch;
+  }
+
+  .inside .map-container {
+    top: -4.029411rem;
+  }
+
+  .inside #map {
+    height: calc(100% + 4.029411rem);
+  }
+
+  #reviews-list article {
+    height: 100%;
   }
 }
 
@@ -738,11 +782,25 @@ abbr[class|="stars"] {
   .filter-options .container select {
     margin-left: 1rem;
   }
+
+  /* body:not(.inside) #map {
+    height: calc(100vh - 4.441177rem - 5.375882rem);
+  } */
 }
 
 @media screen and (min-width: 1080px) {
-  #restaurants-list> * {
+  #restaurants-list> *,
+  .inside nav,
+  #reviews-list> * {
     width: 33.333333%;
+  }
+
+  #restaurant-container {
+    width: calc(33.333333% + 1rem);
+  }
+
+  .inside .map-container {
+    width: calc(66.666667% - 1rem);
   }
 }
 
@@ -763,5 +821,4 @@ abbr[class|="stars"] {
   #restaurants-list> * {
     width: 25%;
   }
-
 }
