@@ -386,9 +386,9 @@ body> header h1,
   padding: 0.8em 0;
 }
 
-/* ========== .map-container ========== */
+/* ========== #map-container ========== */
 
-.map-container {
+#map-container {
   position: relative;
 }
 
@@ -401,6 +401,11 @@ body> header h1,
 .inside #map {
   height: calc(100vh - 7.764706rem);
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
+#map.focused {
+  outline-offset: 1px;
+  outline: 2px solid #82b1ff; /* GMD Blue A100 */
 }
 
 #markerLayer img.focused {
@@ -709,16 +714,16 @@ abbr[class|="stars"] {
   }
 
   #restaurants-list> *,
-  .inside nav,
   #reviews-list> * {
     width: 50%;
   }
 
+  .inside nav,
   #restaurant-container {
     width: calc(50% + 1rem);
   }
 
-  .inside .map-container {
+  .inside #map-container {
     width: calc(50% - 1rem);
   }
 
@@ -726,13 +731,13 @@ abbr[class|="stars"] {
     order: -1;
   }
 
-  .inside .map-container,
+  .inside #map-container,
   #reviews-list> * {
     -ms-flex-item-align: stretch;
     align-self: stretch;
   }
 
-  .inside .map-container {
+  .inside #map-container {
     top: -4.029411rem;
   }
 
@@ -790,16 +795,16 @@ abbr[class|="stars"] {
 
 @media screen and (min-width: 1080px) {
   #restaurants-list> *,
-  .inside nav,
   #reviews-list> * {
     width: 33.333333%;
   }
 
+  .inside nav,
   #restaurant-container {
     width: calc(33.333333% + 1rem);
   }
 
-  .inside .map-container {
+  .inside #map-container {
     width: calc(66.666667% - 1rem);
   }
 }

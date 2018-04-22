@@ -12,7 +12,8 @@ window.initMap = () => {
       self.map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: restaurant.latlng,
-        scrollwheel: false
+        scrollwheel: false,
+        keyboardShortcuts: false
       });
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
@@ -21,7 +22,21 @@ window.initMap = () => {
         /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
         /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
         document.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
-        google.maps.event.removeListener(listenerTiles);
+        const mapFocusable = document.querySelector('#map div[tabindex="0"]');
+        const mapElement = document.getElementById('map');
+        mapFocusable.setAttribute('aria-labelledby', 'map-label');
+        mapFocusable.addEventListener('focus', () => {
+          mapElement.classList.add('focused');
+        });
+        mapFocusable.addEventListener('blur', () => {
+          mapElement.classList.remove('focused');
+        });
+        mapElement.addEventListener('focus', () => {
+          self.map.setOptions({keyboardShortcuts: true});
+        }, true);
+        mapElement.addEventListener('blur', () => {
+          self.map.setOptions({keyboardShortcuts: false});
+        }, true);
       });
     }
   });

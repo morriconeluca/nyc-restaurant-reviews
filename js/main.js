@@ -79,9 +79,32 @@ window.initMap = () => {
   self.map = new google.maps.Map(document.getElementById('map'), {
     zoom: 12,
     center: loc,
-    scrollwheel: false
+    scrollwheel: false,
+    keyboardShortcuts: false
   });
+  initResponsiveMap();
   updateRestaurants();
+}
+
+function initResponsiveMap() {
+  const listenerTiles = google.maps.event.addListener(map, 'tilesloaded', () => {
+    const mapFocusable = document.querySelector('#map div[tabindex="0"]');
+    const mapElement = document.getElementById('map');
+    mapFocusable.setAttribute('aria-labelledby', 'map-label');
+    mapFocusable.addEventListener('focus', () => {
+      mapElement.classList.add('focused');
+    });
+    mapFocusable.addEventListener('blur', () => {
+      mapElement.classList.remove('focused');
+    });
+    mapElement.addEventListener('focus', () => {
+      self.map.setOptions({keyboardShortcuts: true});
+    }, true);
+    mapElement.addEventListener('blur', () => {
+      self.map.setOptions({keyboardShortcuts: false});
+    }, true);
+    google.maps.event.removeListener(listenerTiles);
+  });
 }
 
 /**
@@ -236,9 +259,6 @@ function makeMapAccessible(urls) {
       areas[i].addEventListener('keydown', (e) => {
         if (e.keyCode === 13) window.location.href = urls[i];
       });
-    }
-    if (document.querySelector('#map div[tabindex="0"]')) {
-      document.querySelector('#map div[tabindex="0"]').removeAttribute('tabindex');
     }
     const s = (urls.length > 1) ? 's' : '';
     /* Relying on the title attribute is currently discouraged. See above. However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
