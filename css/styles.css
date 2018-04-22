@@ -362,12 +362,15 @@ body> header h1,
 
 /* ========== #breadcrumb ========== */
 
+.inside nav {
+  background-color: #cfd8dc; /* GMD Blue Grey 100 */
+}
+
 #breadcrumb {
   margin: 0;
   padding: 1.25em 1rem;
   list-style: none;
   text-align: center;
-  background-color: #cfd8dc; /* GMD Blue Grey 100 */
 }
 
 /* Display list items side by side */
@@ -718,7 +721,7 @@ abbr[class|="stars"] {
     width: 50%;
   }
 
-  .inside nav,
+  #breadcrumb,
   #restaurant-container {
     width: calc(50% + 1rem);
   }
@@ -799,7 +802,7 @@ abbr[class|="stars"] {
     width: 33.333333%;
   }
 
-  .inside nav,
+  #breadcrumb,
   #restaurant-container {
     width: calc(33.333333% + 1rem);
   }
@@ -819,8 +822,14 @@ abbr[class|="stars"] {
     max-width: 1332px;
   }
 
-  .results.container {
+  .results.container,
+  .inside nav .container,
+  .inside main.container {
     max-width: 1366px;
+  }
+
+  .inside #map-container {
+    padding-right: 1rem;
   }
 
   #restaurants-list> * {
