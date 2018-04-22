@@ -128,12 +128,14 @@ select {
   height: 2.301468em; /* 3 */
   color: inherit;
   background-color: #fff;
-  background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>');
-  /* background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z" fill="rgba(0,0,0,0.8)"/></svg>'); */
+  /* background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>'); */
+  background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z" fill="rgba(0,0,0,0.8)"/></svg>');
   background-position: calc(100% - 0.8em) 50%, 50% 100%;
-  background-size: 1.25em 1.25em;
+  /* background-size: 1.25em 1.25em; */
+  background-size: 1.5625em 1.5625em;
   background-repeat: no-repeat;
-  padding: 0 2.85em 0 0.8em; /* 4 */
+  /* padding: 0 2.85em 0 0.8em; */ /* 4 */
+  padding: 0 3.1625em 0 0.8em; /* 4 */
 }
 
 input,
@@ -346,7 +348,7 @@ body> header h1,
   padding: 1em 1rem;
   font-size: 1.25em;
   font-weight: normal;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.125em;
   text-transform: uppercase;
 }
 
@@ -470,7 +472,7 @@ body> header h1,
 #restaurants-list article {
   background-color: #fff;
   overflow: hidden;
-  border-radius: 1.953125em 0;
+  border-radius: 1.953125em 0.125em;
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
@@ -504,7 +506,7 @@ body> header h1,
 
 #restaurant-container> div {
   overflow: hidden;
-  border-radius: 1.953125em 0;
+  border-radius: 1.953125em 0.125em;
   background-color: #fff;
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
@@ -582,19 +584,20 @@ body> header h1,
 #reviews-list article {
   background-color: #fff;
   overflow: hidden;
-  border-radius: 1.953125em 0;
+  border-radius: 1.953125em 0.125em;
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #reviews-list header {
   padding:  1em;
-  color: #bdbdbd; /* GMD Grey 400 */
-  background-color: #263238; /* GMD Blue Grey 900 */
+  border-bottom: 1px solid #e0e0e0; /* GMD Grey 300 */
+  /* color: #bdbdbd; */ /* GMD Grey 400 */
+  /* background-color: #263238; */ /* GMD Blue Grey 900 */
 }
 
 #reviews-list h3 {
   margin: 0;
-  font-weight: normal;
+  /* font-weight: normal; */
 }
 
 #reviews-list time {
