@@ -1,267 +1,270 @@
-let restaurants,
-  neighborhoods,
-  cuisines,
-  tilesLoaded = false;
-var map;
-var markers = [];
+((w, d) => {
+  'use strict';
 
-/**
- * Fetch neighborhoods and cuisines as soon as the page is loaded.
- */
-document.addEventListener('DOMContentLoaded', (event) => {
-  fetchNeighborhoods();
-  fetchCuisines();
-});
+  let map,
+    markers = [],
+    tilesLoaded = false;
 
-/**
- * Fetch all neighborhoods and set their HTML.
- */
-fetchNeighborhoods = () => {
-  DBHelper.fetchNeighborhoods((error, neighborhoods) => {
-    if (error) { // Got an error
-      console.error(error);
-    } else {
-      self.neighborhoods = neighborhoods;
-      fillNeighborhoodsHTML();
-    }
+  /**
+   * Fetch neighborhoods and cuisines as soon as the page is loaded.
+   */
+  d.addEventListener('DOMContentLoaded', () => {
+    addSelectListener();
+    fetchNeighborhoods();
+    fetchCuisines();
   });
-}
 
-/**
- * Set neighborhoods HTML.
- */
-fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
-  const select = document.getElementById('neighborhoods-select');
-  neighborhoods.forEach(neighborhood => {
-    const option = document.createElement('option');
-    option.innerHTML = neighborhood;
-    option.value = neighborhood;
-    select.append(option);
-  });
-}
-
-/**
- * Fetch all cuisines and set their HTML.
- */
-fetchCuisines = () => {
-  DBHelper.fetchCuisines((error, cuisines) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.cuisines = cuisines;
-      fillCuisinesHTML();
-    }
-  });
-}
-
-/**
- * Set cuisines HTML.
- */
-fillCuisinesHTML = (cuisines = self.cuisines) => {
-  const select = document.getElementById('cuisines-select');
-
-  cuisines.forEach(cuisine => {
-    const option = document.createElement('option');
-    option.innerHTML = cuisine;
-    option.value = cuisine;
-    select.append(option);
-  });
-}
-
-/**
- * Initialize Google map, called from HTML.
- */
-window.initMap = () => {
-  let loc = {
-    lat: 40.722216,
-    lng: -73.987501
-  };
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: loc,
-    scrollwheel: false,
-    keyboardShortcuts: false
-  });
-  initResponsiveMap();
-  updateRestaurants();
-}
-
-function initResponsiveMap() {
-  const listenerTiles = google.maps.event.addListener(map, 'tilesloaded', () => {
-    const mapFocusable = document.querySelector('#map div[tabindex="0"]');
-    const mapElement = document.getElementById('map');
-    mapFocusable.setAttribute('aria-labelledby', 'map-label');
-    mapFocusable.addEventListener('focus', () => {
-      mapElement.classList.add('focused');
-    });
-    mapFocusable.addEventListener('blur', () => {
-      mapElement.classList.remove('focused');
-    });
-    mapElement.addEventListener('focus', () => {
-      self.map.setOptions({keyboardShortcuts: true});
-    }, true);
-    mapElement.addEventListener('blur', () => {
-      self.map.setOptions({keyboardShortcuts: false});
-    }, true);
-    google.maps.event.removeListener(listenerTiles);
-  });
-}
-
-/**
- * Update page and map for current restaurants.
- */
-updateRestaurants = () => {
-  const cSelect = document.getElementById('cuisines-select');
-  const nSelect = document.getElementById('neighborhoods-select');
-
-  const cIndex = cSelect.selectedIndex;
-  const nIndex = nSelect.selectedIndex;
-
-  const cuisine = cSelect[cIndex].value;
-  const neighborhood = nSelect[nIndex].value;
-
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      resetRestaurants(restaurants);
-      fillRestaurantsHTML();
-    }
-  })
-}
-
-/**
- * Clear current restaurants, their HTML and remove their map markers.
- */
-resetRestaurants = (restaurants) => {
-  // Remove all restaurants
-  self.restaurants = [];
-  const ul = document.getElementById('restaurants-list');
-  ul.innerHTML = '';
-
-  /* Remove all map markers. When a DOM Element is removed, its listeners are removed from memory too. */
-  self.markers.forEach(m => m.setMap(null));
-  self.markers = [];
-  self.restaurants = restaurants;
-}
-
-/**
- * Create all restaurants HTML and add them to the webpage.
- */
-fillRestaurantsHTML = (restaurants = self.restaurants) => {
-  const notice = document.getElementById('results-notice');
-  let result = '';
-  if (!restaurants.length) {
-    result = 'No restaurants found';
-  } else {
-    const ul = document.getElementById('restaurants-list');
-    let counter = 0;
-    restaurants.forEach(restaurant => {
-      ul.append(createRestaurantHTML(restaurant));
-      counter++;
-    });
-    let s = (counter > 1) ? 's' : '';
-    result = `${counter} restaurant${s} found`;
+  /**
+   * Add event listener on select elements to filter results.
+   */
+  function addSelectListener() {
+    const nSelect = d.getElementById('neighborhoods-select');
+    const cSelect = d.getElementById('cuisines-select');
+    nSelect.addEventListener('change', updateRestaurants);
+    cSelect.addEventListener('change', updateRestaurants);
   }
-  notice.innerHTML = result;
 
-  addMarkersToMap();
-}
+  /**
+   * Fetch all neighborhoods and set their HTML.
+   */
+  function fetchNeighborhoods() {
+    DBHelper.fetchNeighborhoods()
+      .then(fillNeighborhoodsHTML);
+  }
 
-/**
- * Create restaurant HTML.
- */
-createRestaurantHTML = (restaurant) => {
-  const li = document.createElement('li');
-  const article = document.createElement('article');
-
-  const image = document.createElement('img');
-  image.className = 'restaurant-img';
-  image.alt = `The ${restaurant.cuisine_type} Restaurant ${restaurant.name}`;
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  article.append(image);
-
-  const name = document.createElement('h3');
-  name.innerHTML = restaurant.name;
-  article.append(name);
-
-  const neighborhood = document.createElement('p');
-  neighborhood.innerHTML = `<strong>${restaurant.neighborhood}</strong>`;
-  article.append(neighborhood);
-
-  const address = document.createElement('address');
-  const addressInner = document.createElement('p');
-  address.innerHTML = restaurant.address;
-  address.append(addressInner);
-  article.append(address);
-
-  const moreContainer = document.createElement('p');
-  const more = document.createElement('a');
-  more.innerHTML = 'View Details';
-  more.href = DBHelper.urlForRestaurant(restaurant);
-  more.className = 'button';
-  /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
-  /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
-  /*  One alternative option could be using aria-labelledby, but in this case it's better using the aria-label attribute instead of title. N.B. The aria-label overrides the link text. */
-  more.setAttribute('aria-label', `View Details about ${restaurant.name}`);
-  moreContainer.append(more);
-  article.append(moreContainer);
-
-  li.append(article);
-
-  return li;
-}
-
-/**
- * Add markers for current restaurants to the map.
- */
-addMarkersToMap = (restaurants = self.restaurants) => {
-  let urls = [];
-  restaurants.forEach(restaurant => {
-    // Add marker to the map
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
-    google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url;
+  /**
+   * Set neighborhoods HTML.
+   */
+  function fillNeighborhoodsHTML(neighborhoods) {
+    const select = d.getElementById('neighborhoods-select');
+    neighborhoods.forEach(neighborhood => {
+      const option = d.createElement('option');
+      option.innerHTML = neighborhood;
+      option.value = neighborhood;
+      select.append(option);
     });
-    self.markers.push(marker);
-    urls.push(marker.url);
-  });
-  // Create an overlay object for assign an id to markerLayer
-  var gmOverlay = new google.maps.OverlayView();
-  gmOverlay.draw = function () {
-    this.getPanes().markerLayer.id='markerLayer';
+  }
+
+  /**
+   * Fetch all cuisines and set their HTML.
+   */
+  function fetchCuisines() {
+    DBHelper.fetchCuisines()
+      .then(fillCuisinesHTML);
+  }
+
+  /**
+   * Set cuisines HTML.
+   */
+  function fillCuisinesHTML(cuisines) {
+    const select = d.getElementById('cuisines-select');
+    cuisines.forEach(cuisine => {
+      const option = d.createElement('option');
+      option.innerHTML = cuisine;
+      option.value = cuisine;
+      select.append(option);
+    });
+  }
+
+  /**
+   * Initialize Google map, called from HTML.
+   */
+  w.initMap = () => {
+    let loc = {
+      lat: 40.722216,
+      lng: -73.987501
+    };
+    map = new google.maps.Map(d.getElementById('map'), {
+      center: loc,
+      zoom: 12,
+      scrollwheel: false,
+      keyboardShortcuts: false // Disable Google Maps keyboard UI.
+    });
+    updateRestaurants();
+    initMapAccessibility();
   };
-  gmOverlay.setMap(map);
-  if (!tilesLoaded) {
+
+  /**
+   * Fix some accessibility issue with Google map.
+   */
+  function initMapAccessibility() {
     // This event fires when the visible tiles have finished loading.
-    const listenerTiles = google.maps.event.addListener(map, 'tilesloaded', () => {
-      makeMapAccessible(urls);
-      tilesLoaded = true;
+    const listenerTiles = map.addListener('tilesloaded', () => {
+      const mapDOMElement = d.getElementById('map');
+      const div = d.querySelector('#map div[tabindex="0"]');
+      div.setAttribute('aria-labelledby', 'map-label');
+      // Highlight when map DOM element is onfocus.
+      div.addEventListener('focus', () => {
+        mapDOMElement.classList.add('focused');
+      });
+      // Remove highlight when map DOM element is onblur.
+      div.addEventListener('blur', () => {
+        mapDOMElement.classList.remove('focused');
+      });
+      /* Enable Google Maps keyboard UI, when map DOM element or any of his children is onfocus. */
+      mapDOMElement.addEventListener('focus', () => {
+        map.setOptions({keyboardShortcuts: true});
+      }, true);
+      /* Disable Google Maps keyboard UI, when map DOM element or any of his children is onblur. */
+      mapDOMElement.addEventListener('blur', () => {
+        map.setOptions({keyboardShortcuts: false});
+      }, true);
+      // Remove event listener.
       google.maps.event.removeListener(listenerTiles);
     });
-  } else {
-    makeMapAccessible(urls);
   }
-}
 
-function makeMapAccessible(urls) {
-  setTimeout(() => {
-    const areas = document.querySelectorAll('[id^="gmimap"]> area');
-    const layers = document.querySelectorAll('#markerLayer img');
-    for (let i = 0; i < areas.length; i++) {
-      areas[i].tabIndex = 0;
-      areas[i].addEventListener('focus', () => {
-        layers[i].classList.add('focused');
+  /**
+   * Update page and map for current restaurants.
+   */
+  function updateRestaurants() {
+    const cSelect = d.getElementById('cuisines-select');
+    const nSelect = d.getElementById('neighborhoods-select');
+
+    const cIndex = cSelect.selectedIndex;
+    const nIndex = nSelect.selectedIndex;
+
+    const cuisine = cSelect[cIndex].value;
+    const neighborhood = nSelect[nIndex].value;
+
+    DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood)
+      .then((restaurants) => {
+        resetRestaurants();
+        fillRestaurantsHTML(restaurants);
       });
-      areas[i].addEventListener('blur', () => {
-        layers[i].classList.remove('focused');
+  }
+
+  /**
+   * Clear current restaurants, their HTML and remove their map markers.
+   */
+  function resetRestaurants() {
+    // Remove all restaurants.
+    const ul = d.getElementById('restaurants-list');
+    ul.innerHTML = '';
+    /* Remove all map markers. When a DOM Element is removed, its listeners are removed from memory too. */
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+  }
+
+  /**
+   * Create all restaurants HTML and add them to the webpage.
+   */
+  function fillRestaurantsHTML(restaurants) {
+    const notice = d.getElementById('results-notice');
+    if (!restaurants.length) {
+      notice.innerHTML = 'No restaurants found';
+    } else {
+      const ul = d.getElementById('restaurants-list');
+      restaurants.forEach(restaurant => {
+        ul.append(createRestaurantHTML(restaurant));
       });
-      areas[i].addEventListener('keydown', (e) => {
-        if (e.keyCode === 13) window.location.href = urls[i];
-      });
+      let s = (restaurants.length > 1) ? 's' : '';
+      notice.innerHTML = `${restaurants.length} restaurant${s} found`;
     }
-    const s = (urls.length > 1) ? 's' : '';
-    /* Relying on the title attribute is currently discouraged. See above. However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
-    document.querySelector('#map iframe').title = `Map shows ${urls.length} restaurant${s}`;
-  }, 150);
-}
+    addMarkersToMap(restaurants);
+  }
+
+  /**
+   * Create restaurant HTML.
+   */
+  function createRestaurantHTML(restaurant) {
+    const li = d.createElement('li');
+    const article = d.createElement('article');
+
+    const image = d.createElement('img');
+    image.className = 'restaurant-img';
+    /* Adding alternative text for images is the first principle of web accessibility. [...] Every image must have an alt attribute. This is a requirement of HTML standard (with perhaps a few exceptions in HTML5). Images without an alt attribute are likely inaccessible. In some cases, images may be given an empty or null alt attribute (e.g., alt=""). https://webaim.org/techniques/alttext/ */
+    image.alt = `The ${restaurant.cuisine_type} Restaurant ${restaurant.name}`;
+    image.src = DBHelper.imageUrlForRestaurant(restaurant);
+    article.append(image);
+
+    const name = d.createElement('h3');
+    name.innerHTML = restaurant.name;
+    article.append(name);
+
+    const neighborhood = d.createElement('p');
+    const strong = d.createElement('strong');
+    strong.innerHTML = `${restaurant.neighborhood}`;
+    neighborhood.append(strong);
+    article.append(neighborhood);
+
+    const address = d.createElement('address');
+    const addressContent = d.createElement('p');
+    address.innerHTML = restaurant.address;
+    address.append(addressContent);
+    article.append(address);
+
+    const more = d.createElement('p');
+    const button = d.createElement('a');
+    button.innerHTML = 'View Details';
+    button.href = DBHelper.urlForRestaurant(restaurant);
+    button.className = 'button';
+    /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+    /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
+    /*  One alternative option could be using aria-labelledby, but in this case it's better using the aria-label attribute instead of title. N.B. The aria-label overrides the link text. */
+    button.setAttribute('aria-label', `View Details about ${restaurant.name}`);
+    more.append(button);
+    article.append(more);
+
+    li.append(article);
+    return li;
+  }
+
+  /**
+   * Add markers for current restaurants to the map.
+   */
+  function addMarkersToMap(restaurants) {
+    restaurants.forEach(restaurant => {
+      // Add marker to the map.
+      const marker = DBHelper.mapMarkerForRestaurant(restaurant, map);
+      marker.addListener('click', () => {
+        w.location.href = marker.url;
+      });
+      markers.push(marker);
+    });
+    // Create an overlay object for assign an id to markerLayer.
+    const overlay = new google.maps.OverlayView();
+    overlay.draw = function () {
+      this.getPanes().markerLayer.id='markerLayer'; // TODO: To test.
+    };
+    overlay.setMap(map);
+    if (!tilesLoaded) {
+      // This event fires when the visible tiles have finished loading.
+      const listenerTiles = map.addListener('tilesloaded', () => {
+        addAccessibilityToMarkers(restaurants);
+        tilesLoaded = true;
+        google.maps.event.removeListener(listenerTiles);
+      });
+    } else {
+      addAccessibilityToMarkers(restaurants);
+    }
+  }
+
+  /**
+   * TODO: Add documentation.
+   */
+  function addAccessibilityToMarkers(restaurants) {
+    setTimeout(() => {
+      const areas = d.querySelectorAll('[id^="gmimap"]> area');
+      const layers = d.querySelectorAll('#markerLayer img');
+      for (let i = 0; i < areas.length; i++) {
+        areas[i].tabIndex = 0;
+        areas[i].addEventListener('focus', () => {
+          layers[i].classList.add('focused');
+        });
+        areas[i].addEventListener('blur', () => {
+          layers[i].classList.remove('focused');
+        });
+        areas[i].addEventListener('keydown', (e) => {
+          if (e.keyCode === 13) {
+            w.location.href = DBHelper.urlForRestaurant(restaurants[i]);
+          }
+        });
+      }
+      const s = (restaurants.length > 1) ? 's' : '';
+      /* Relying on the title attribute is currently discouraged. See above. However, many sources say that <iframe> elements in the d must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
+      d.querySelector('#map iframe').title = `Map shows ${restaurants.length} restaurant${s}`;
+    }, 150);
+  }
+
+})(window, document);

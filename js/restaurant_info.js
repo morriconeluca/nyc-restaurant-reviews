@@ -1,213 +1,236 @@
-let restaurant;
-var map;
+((w, d) => {
+  'use strict';
 
-/**
- * Initialize Google map, called from HTML.
- */
-window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
+  let map;
+
+  /**
+   * Initialize Google map, called from HTML.
+   */
+  w.initMap = () => {
+    fetchRestaurantFromURL()
+      .then((restaurant) => {
+        map = new google.maps.Map(d.getElementById('map'), {
+          center: restaurant.latlng,
+          zoom: 16,
+          scrollwheel: false,
+          keyboardShortcuts: false // Disable Google Maps keyboard UI.
+        });
+        DBHelper.mapMarkerForRestaurant(restaurant, map);
+        initMapAccessibility();
+        const listenerTiles = map.addListener('tilesloaded', () => {
+          setTimeout(() => {
+            /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+            /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
+            d.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
+          }, 150);
+          // Remove event listener.
+          google.maps.event.removeListener(listenerTiles);
+        });
+        fillBreadcrumb(restaurant);
+      });
+  };
+
+  /**
+   * Get current restaurant from page URL.
+   */
+  function fetchRestaurantFromURL() {
+    const id = getParameterByName('id');
+    if (!id) { // No id found in URL.
+      console.log('No restaurant id in URL'); // TODO something better.
     } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false,
-        keyboardShortcuts: false
-      });
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-      // This event fires when the visible tiles have finished loading.
-      const listenerTiles = google.maps.event.addListener(map, 'tilesloaded', () => {
-        /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
-        /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
-        document.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
-        const mapFocusable = document.querySelector('#map div[tabindex="0"]');
-        const mapElement = document.getElementById('map');
-        mapFocusable.setAttribute('aria-labelledby', 'map-label');
-        mapFocusable.addEventListener('focus', () => {
-          mapElement.classList.add('focused');
+      return DBHelper.fetchRestaurantById(id)
+        .then((restaurant) => {
+          fillRestaurantHTML(restaurant);
+          return restaurant;
         });
-        mapFocusable.addEventListener('blur', () => {
-          mapElement.classList.remove('focused');
-        });
-        mapElement.addEventListener('focus', () => {
-          self.map.setOptions({keyboardShortcuts: true});
-        }, true);
-        mapElement.addEventListener('blur', () => {
-          self.map.setOptions({keyboardShortcuts: false});
-        }, true);
-      });
     }
-  });
-}
-
-/**
- * Get current restaurant from page URL.
- */
-fetchRestaurantFromURL = (callback) => {
-  if (self.restaurant) { // restaurant already fetched!
-    callback(null, self.restaurant)
-    return;
   }
-  const id = getParameterByName('id');
-  if (!id) { // no id found in URL
-    error = 'No restaurant id in URL'
-    callback(error, null);
-  } else {
-    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-      self.restaurant = restaurant;
-      if (!restaurant) {
-        console.error(error);
-        return;
-      }
-      fillRestaurantHTML();
-      callback(null, restaurant)
+
+  /**
+   * Get a parameter by name from page URL.
+   */
+  function getParameterByName(name) {
+    const url = new URL(w.location.href);
+    return url.searchParams.get(name);
+  }
+
+  /**
+   * Create restaurant HTML and add it to the webpage.
+   */
+  function fillRestaurantHTML(restaurant) {
+    // Add a more meaningful title to the page for better accessibility.
+    const title = d.querySelector('title');
+    title.innerHTML = `${restaurant.name} - Restaurant Info and Reviews`;
+
+    const mapLabel = d.getElementById('map-label');
+    mapLabel.innerHTML = `Google Maps Widget: shows the ${restaurant.name} location`;
+
+    const name = d.getElementById('restaurant-name');
+    name.innerHTML = restaurant.name;
+
+    const address = d.getElementById('restaurant-address');
+    address.innerHTML = restaurant.address;
+
+    const image = d.getElementById('restaurant-img');
+    image.className = 'restaurant-img';
+    /* Adding alternative text for images is the first principle of web accessibility. [...] Every image must have an alt attribute. This is a requirement of HTML standard (with perhaps a few exceptions in HTML5). Images without an alt attribute are likely inaccessible. In some cases, images may be given an empty or null alt attribute (e.g., alt=""). https://webaim.org/techniques/alttext/ */
+    image.alt = `The Restaurant ${restaurant.name} in ${restaurant.neighborhood}`;
+    image.src = DBHelper.imageUrlForRestaurant(restaurant);
+
+    const cuisine = d.getElementById('restaurant-cuisine');
+    const strong = d.createElement('strong');
+    strong.innerHTML = `Type of Cuisine: ${restaurant.cuisine_type}`;
+    cuisine.appendChild(strong);
+
+    // Fill operating hours.
+    if (restaurant.operating_hours) {
+      fillRestaurantHoursHTML(restaurant.operating_hours);
+    }
+    // Fill reviews.
+    fillReviewsHTML(restaurant.reviews);
+  }
+
+  /**
+   * Create restaurant operating hours HTML table and add it to the webpage.
+   */
+  function fillRestaurantHoursHTML(operatingHours) {
+    const hours = d.getElementById('restaurant-hours');
+    for (let key in operatingHours) {
+      const row = d.createElement('tr');
+
+      const day = d.createElement('th');
+      day.innerHTML = key;
+      day.scope = 'row';
+      row.appendChild(day);
+
+      const time = d.createElement('td');
+      time.innerHTML = operatingHours[key];
+      row.appendChild(time);
+
+      hours.appendChild(row);
+    }
+  }
+
+  /**
+   * Create all reviews HTML and add them to the webpage.
+   */
+  function fillReviewsHTML(reviews) {
+    const container = d.getElementById('reviews-container');
+    const title = d.createElement('h2');
+    title.innerHTML = 'Reviews';
+    container.appendChild(title);
+
+    if (!reviews) {
+      const noReviews = d.createElement('p');
+      noReviews.innerHTML = 'No reviews yet!';
+      container.appendChild(noReviews);
+      return;
+    }
+    const ul = d.getElementById('reviews-list');
+    reviews.forEach(review => {
+      ul.appendChild(createReviewHTML(review));
+    });
+    container.appendChild(ul);
+  }
+
+  /**
+   * Create review HTML and add it to the webpage.
+   */
+  function createReviewHTML(review) {
+    const li = d.createElement('li');
+    const article = d.createElement('article');
+
+    const header = d.createElement('header');
+    const heading = d.createElement('h3');
+
+    const name = d.createElement('span');
+    name.innerHTML = review.name;
+    heading.appendChild(name);
+
+    const date = d.createElement('time');
+    date.dateTime = formatDatetime(review.date);
+    date.innerHTML = review.date;
+    heading.appendChild(date);
+
+    header.appendChild(heading);
+    article.appendChild(header);
+
+    const ratingContainer = d.createElement('p');
+    /* Ratings are often presented either as a set of images or characters, e.g. "***". For these, the <abbr> element is particularly useful, as such characters are an abbreviation for the precise rating, e.g. <abbr class="rating" title="3.0">***</abbr>. http://microformats.org/wiki/hreview */
+    const rating = d.createElement('abbr');
+    /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+    /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
+    /* The title is an HTML global attribute, so it can be used on any HTML element. The screen readers behaviour is the same for all elements with the title attribute. For these reasons, in this case, the inner text node was left blank. The stars are rendered using ::before and ::after pseudo elements. --> */
+    rating.title = `Rating: ${review.rating} of 5`;
+    rating.className = `stars-${review.rating}`;
+    ratingContainer.appendChild(rating);
+    article.appendChild(ratingContainer);
+
+    const comments = d.createElement('p');
+    comments.innerHTML = review.comments;
+    article.appendChild(comments);
+
+    li.appendChild(article);
+    return li;
+  }
+
+  /**
+   * Get a representation of date string in a machine-readable format.
+   */
+  function formatDatetime(date) {
+    const d = new Date(date),
+      year = d.getFullYear();
+    let month = (d.getMonth() + 1) + '',
+      day = d.getDate() + '';
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+  }
+
+  /**
+   * Fix some accessibility issue with Google map.
+   */
+  function initMapAccessibility() {
+    // This event fires when the visible tiles have finished loading.
+    const listenerTiles = map.addListener('tilesloaded', () => {
+      const mapDOMElement = d.getElementById('map');
+      const div = d.querySelector('#map div[tabindex="0"]');
+      div.setAttribute('aria-labelledby', 'map-label');
+      // Highlight when map DOM element is onfocus.
+      div.addEventListener('focus', () => {
+        mapDOMElement.classList.add('focused');
+      });
+      // Remove highlight when map DOM element is onblur.
+      div.addEventListener('blur', () => {
+        mapDOMElement.classList.remove('focused');
+      });
+      /* Enable Google Maps keyboard UI, when map DOM element or any of his children is onfocus. */
+      mapDOMElement.addEventListener('focus', () => {
+        map.setOptions({keyboardShortcuts: true});
+      }, true);
+      /* Disable Google Maps keyboard UI, when map DOM element or any of his children is onblur. */
+      mapDOMElement.addEventListener('blur', () => {
+        map.setOptions({keyboardShortcuts: false});
+      }, true);
+      // Remove event listener.
+      google.maps.event.removeListener(listenerTiles);
     });
   }
-}
 
-/**
- * Create restaurant HTML and add it to the webpage
- */
-fillRestaurantHTML = (restaurant = self.restaurant) => {
-  const title = document.querySelector('title');
-  title.innerHTML = `${restaurant.name} - Restaurant Info and Reviews`;
-
-  const name = document.getElementById('restaurant-name');
-  name.innerHTML = restaurant.name;
-
-  const address = document.getElementById('restaurant-address');
-  address.innerHTML = restaurant.address;
-
-  const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img';
-  image.alt = `The Restaurant ${restaurant.name} in ${restaurant.neighborhood}`;
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-
-  const cuisine = document.getElementById('restaurant-cuisine');
-  cuisine.innerHTML = `<strong>${restaurant.cuisine_type} Cuisine</strong>`;
-
-  // fill operating hours
-  if (restaurant.operating_hours) {
-    fillRestaurantHoursHTML();
+  /**
+   * Add restaurant name to the breadcrumb navigation menu
+   */
+  function fillBreadcrumb(restaurant) {
+    const breadcrumb = d.getElementById('breadcrumb');
+    const li = d.createElement('li');
+    const a = d.createElement('a');
+    const url = DBHelper.urlForRestaurant(restaurant);
+    a.href = url;
+    /* Here the title attribute is to avoid, and the link text is enough for accessibility. See above about title. */
+    a.setAttribute('aria-current', 'page' );
+    a.innerHTML = restaurant.name;
+    li.appendChild(a);
+    breadcrumb.appendChild(li);
   }
-  // fill reviews
-  fillReviewsHTML();
-}
 
-/**
- * Create restaurant operating hours HTML table and add it to the webpage.
- */
-fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
-  const hours = document.getElementById('restaurant-hours');
-  for (let key in operatingHours) {
-    const row = document.createElement('tr');
-
-    const day = document.createElement('th');
-    day.innerHTML = key;
-    day.scope = 'row';
-    row.appendChild(day);
-
-    const time = document.createElement('td');
-    time.innerHTML = operatingHours[key];
-    row.appendChild(time);
-
-    hours.appendChild(row);
-  }
-}
-
-/**
- * Create all reviews HTML and add them to the webpage.
- */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
-
-  if (!reviews) {
-    const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
-    container.appendChild(noReviews);
-    return;
-  }
-  const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
-    ul.appendChild(createReviewHTML(review));
-  });
-  container.appendChild(ul);
-}
-
-/**
- * Create review HTML and add it to the webpage.
- */
-createReviewHTML = (review) => {
-  const li = document.createElement('li');
-  const article = document.createElement('article');
-
-  const header = document.createElement('header');
-  const heading = document.createElement('h3');
-
-  const name = document.createElement('span');
-  name.innerHTML = review.name;
-  heading.appendChild(name);
-
-  const date = document.createElement('time');
-  date.innerHTML = review.date;
-  heading.appendChild(date);
-
-  header.appendChild(heading);
-  article.appendChild(header);
-
-  const ratingContainer = document.createElement('p');
-  /* Ratings are often presented either as a set of images or characters, e.g. "***". For these, the <abbr> element is particularly useful, as such characters are an abbreviation for the precise rating, e.g. <abbr class="rating" title="3.0">***</abbr>. http://microformats.org/wiki/hreview */
-  const rating = document.createElement('abbr');
-  /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
-  /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
-  /* The title is an HTML global attribute, so it can be used on any HTML element. The screen readers behaviour is the same for all elements with the title attribute. For these reasons, in this case, the inner text node was left blank. The stars are rendered using ::before and ::after pseudo elements. --> */
-  rating.title = `Rating: ${review.rating} of 5`;
-  rating.className = `stars-${review.rating}`;
-  ratingContainer.appendChild(rating);
-  article.appendChild(ratingContainer);
-
-  const comments = document.createElement('p');
-  comments.innerHTML = review.comments;
-  article.appendChild(comments);
-
-  li.appendChild(article);
-
-  return li;
-}
-
-/**
- * Add restaurant name to the breadcrumb navigation menu
- */
-fillBreadcrumb = (restaurant=self.restaurant) => {
-  const breadcrumb = document.getElementById('breadcrumb');
-  const li = document.createElement('li');
-  const a = document.createElement('a');
-  const url = window.location.pathname + window.location.search;
-  a.href = url;
-  /* Here the title attribute is to avoid, and the link text is enough for accessibility. See above about title. */
-  a.setAttribute('aria-current', 'page' );
-  a.innerHTML = restaurant.name;
-  li.appendChild(a);
-  breadcrumb.appendChild(li);
-}
-
-/**
- * Get a parameter by name from page URL.
- */
-getParameterByName = (name, url) => {
-  if (!url)
-    url = window.location.href;
-  name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
-    results = regex.exec(url);
-  if (!results)
-    return null;
-  if (!results[2])
-    return '';
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
+})(window, document);
