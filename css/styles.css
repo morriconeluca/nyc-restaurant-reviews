@@ -687,6 +687,15 @@ abbr[class|="stars"] {
 
 /* ========== RESPONSIVE ========== */
 
+@media screen and (min-width: 500px) {
+  #results-notice,
+  #reviews-container h2 {
+    font-size: 1.5625em;
+    letter-spacing: 0.125em;
+    margin: 0.8em 0;
+  }
+}
+
 @media screen and (min-width: 700px) {
   html {
     line-height: 1.5625;
@@ -694,13 +703,6 @@ abbr[class|="stars"] {
 
   body:not(.inside) #map {
     height: calc(100vh - 4.441177rem);
-  }
-
-  #results-notice,
-  #reviews-container h2 {
-    font-size: 1.5625em;
-    letter-spacing: 0.125em;
-    margin: 0.8em 0;
   }
 
   #restaurants-list,
