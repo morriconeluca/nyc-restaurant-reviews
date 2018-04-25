@@ -1,48 +1,67 @@
 ((w, d) => {
   'use strict';
 
+  if (!w.fetch) {
+    console.log('Fetch API not supported');
+    return;
+  }
+
   let map;
 
   /**
-   * Initialize Google map, called from HTML.
+   * Initialize Google map, called from HTML with proper error handling.
    */
   w.initMap = () => {
-    fetchRestaurantFromURL()
-      .then((restaurant) => {
-        map = new google.maps.Map(d.getElementById('map'), {
-          center: restaurant.latlng,
-          zoom: 16,
-          scrollwheel: false,
-          keyboardShortcuts: false // Disable Google Maps keyboard UI.
+    try {
+      fetchRestaurantFromURL()
+        .then((restaurant) => {
+          map = new google.maps.Map(d.getElementById('map'), {
+            center: restaurant.latlng,
+            zoom: 16,
+            scrollwheel: false,
+            keyboardShortcuts: false // Disable Google Maps keyboard UI.
+          });
+          DBHelper.mapMarkerForRestaurant(restaurant, map);
+          initMapAccessibility();
+          const listenerTiles = map.addListener('tilesloaded', () => {
+            setTimeout(() => {
+              /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+              /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
+              d.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
+            }, 150);
+            // Remove event listener.
+            google.maps.event.removeListener(listenerTiles);
+          });
+          fillBreadcrumb(restaurant);
+        })
+        .catch((error) => {
+          console.log(error);
         });
-        DBHelper.mapMarkerForRestaurant(restaurant, map);
-        initMapAccessibility();
-        const listenerTiles = map.addListener('tilesloaded', () => {
-          setTimeout(() => {
-            /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
-            /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
-            d.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
-          }, 150);
-          // Remove event listener.
-          google.maps.event.removeListener(listenerTiles);
-        });
-        fillBreadcrumb(restaurant);
-      });
+      } catch(error) {
+        console.log(error);
+      }
   };
 
   /**
-   * Get current restaurant from page URL.
+   * Get current restaurant from page URL with proper error handling.
    */
   function fetchRestaurantFromURL() {
-    const id = getParameterByName('id');
-    if (!id) { // No id found in URL.
-      console.log('No restaurant id in URL'); // TODO something better.
-    } else {
-      return DBHelper.fetchRestaurantById(id)
-        .then((restaurant) => {
-          fillRestaurantHTML(restaurant);
-          return restaurant;
-        });
+    try {
+      const id = getParameterByName('id');
+      if (!id) { // No id found in URL.
+        throw new Error('No restaurant id in URL');
+      } else {
+        return DBHelper.fetchRestaurantById(id)
+          .then((restaurant) => {
+            fillRestaurantHTML(restaurant);
+            return restaurant;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch(error) {
+      console.log(error);
     }
   }
 

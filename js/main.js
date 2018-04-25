@@ -1,6 +1,11 @@
 ((w, d) => {
   'use strict';
 
+  if (!w.fetch) {
+    console.log('Fetch API not supported');
+    return;
+  }
+
   let map,
     markers = [],
     tilesLoaded = false;
@@ -25,11 +30,14 @@
   }
 
   /**
-   * Fetch all neighborhoods and set their HTML.
+   * Fetch all neighborhoods and set their HTML with proper error handling.
    */
   function fetchNeighborhoods() {
     DBHelper.fetchNeighborhoods()
-      .then(fillNeighborhoodsHTML);
+      .then(fillNeighborhoodsHTML)
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   /**
@@ -46,11 +54,14 @@
   }
 
   /**
-   * Fetch all cuisines and set their HTML.
+   * Fetch all cuisines and set their HTML with proper error handling.
    */
   function fetchCuisines() {
     DBHelper.fetchCuisines()
-      .then(fillCuisinesHTML);
+      .then(fillCuisinesHTML)
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   /**
@@ -115,7 +126,7 @@
   }
 
   /**
-   * Update page and map for current restaurants.
+   * Update page and map for current restaurants with proper error handling.
    */
   function updateRestaurants() {
     const cSelect = d.getElementById('cuisines-select');
@@ -131,6 +142,9 @@
       .then((restaurants) => {
         resetRestaurants();
         fillRestaurantsHTML(restaurants);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 

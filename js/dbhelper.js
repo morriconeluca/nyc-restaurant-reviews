@@ -13,7 +13,7 @@ class DBHelper {
   }
 
   /**
-   * Fetch all restaurants.
+   * Fetch all restaurants with proper error handling.
    */
   static fetchRestaurants() {
     return fetch(DBHelper.DATABASE_URL)
@@ -32,7 +32,7 @@ class DBHelper {
   }
 
   /**
-   * Fetch all neighborhoods.
+   * Fetch all neighborhoods with proper error handling.
    */
   static fetchNeighborhoods() {
     // Fetch all restaurants.
@@ -43,11 +43,14 @@ class DBHelper {
         // Remove duplicates from neighborhoods.
         const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) === i);
         return uniqueNeighborhoods;
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
   /**
-   * Fetch all cuisines.
+   * Fetch all cuisines with proper error handling.
    */
   static fetchCuisines() {
     // Fetch all restaurants.
@@ -58,11 +61,14 @@ class DBHelper {
         // Remove duplicates from cuisines.
         const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) === i);
         return uniqueCuisines;
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
   /**
-   * Fetch restaurants by a cuisine and a neighborhood.
+   * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood) {
     // Fetch all restaurants.
@@ -76,11 +82,14 @@ class DBHelper {
           results = results.filter(r => r.neighborhood === neighborhood);
         }
         return results;
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
   /**
-   * Fetch a restaurant by its ID.
+   * Fetch a restaurant by its ID with proper error handling.
    */
   static fetchRestaurantById(id) {
     // Fetch all restaurants with proper error handling.
@@ -126,7 +135,7 @@ class DBHelper {
   }
 
   /**
-   * Fetch restaurants by a cuisine type.
+   * Fetch restaurants by a cuisine type with proper error handling.
    */
   static fetchRestaurantByCuisine(cuisine) {
     // Fetch all restaurants.
@@ -134,11 +143,14 @@ class DBHelper {
       .then((restaurants) => {
         // Filter restaurants to have only given cuisine type.
         return restaurants.filter(r => r.cuisine_type == cuisine);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
   /**
-   * Fetch restaurants by a neighborhood.
+   * Fetch restaurants by a neighborhood with proper error handling.
    */
   static fetchRestaurantByNeighborhood(neighborhood) {
     // Fetch all restaurants.
@@ -146,6 +158,9 @@ class DBHelper {
       .then((restaurants) => {
         // Filter restaurants to have only given neighborhood.
         return restaurants.filter(r => r.neighborhood == neighborhood);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
