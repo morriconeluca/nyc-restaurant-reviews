@@ -291,10 +291,6 @@ tr:nth-of-type(even) {
   background-color: rgba(144,164,174,0.2); /* GMD Blue Grey 300 */
 }
 
-table caption {
-  margin-bottom: 1.25em;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -324,6 +320,10 @@ body {
 
 address {
   font-size: 0.8em;
+}
+
+address p {
+  margin: 1.25em 0;
 }
 
 /* ========== .header ========== */
@@ -456,6 +456,7 @@ body> header h1,
   font-size: 1.25em;
   text-align: center;
   text-transform: uppercase;
+  text-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #restaurants-list {
@@ -489,7 +490,7 @@ body> header h1,
   text-transform: uppercase;
 }
 
-#restaurants-list article p:last-child {
+#restaurants-list article> p:last-child {
   margin-top: 1.5625em;
   text-align: right;
 }
@@ -550,6 +551,8 @@ body> header h1,
   font-size: 1.25em;
   font-weight: bold;
   text-align: left;
+  padding-bottom: 1em!important;
+  border-bottom: 1px solid #e0e0e0; /* GMD Grey 300 */
 }
 
 /* ========== #reviews-container ========== */
@@ -564,6 +567,7 @@ body> header h1,
   font-size: 1.25em;
   text-align: center;
   text-transform: uppercase;
+  text-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #reviews-container> p {
@@ -591,13 +595,10 @@ body> header h1,
 #reviews-list header {
   padding:  1em;
   border-bottom: 1px solid #e0e0e0; /* GMD Grey 300 */
-  /* color: #bdbdbd; */ /* GMD Grey 400 */
-  /* background-color: #263238; */ /* GMD Blue Grey 900 */
 }
 
 #reviews-list h3 {
   margin: 0;
-  /* font-weight: normal; */
 }
 
 #reviews-list time {
@@ -697,8 +698,9 @@ abbr[class|="stars"] {
 
   #results-notice,
   #reviews-container h2 {
-    margin: 0.8em 0;
     font-size: 1.5625em;
+    letter-spacing: 0.125em;
+    margin: 0.8em 0;
   }
 
   #restaurants-list,
@@ -800,6 +802,12 @@ abbr[class|="stars"] {
 }
 
 @media screen and (min-width: 1080px) {
+  #results-notice,
+  #reviews-container h2 {
+    font-size: 1.953125em;
+    margin: 0.64em 0;
+  }
+
   #restaurants-list> *,
   #reviews-list> * {
     width: 33.333333%;

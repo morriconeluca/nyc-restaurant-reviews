@@ -204,7 +204,7 @@
 
     const address = d.createElement('address');
     const addressContent = d.createElement('p');
-    address.innerHTML = restaurant.address;
+    addressContent.innerHTML = restaurant.address;
     address.append(addressContent);
     article.append(address);
 

@@ -49,7 +49,7 @@
     try {
       const id = getParameterByName('id');
       if (!id) { // No id found in URL.
-        throw new Error('No restaurant id in URL');
+        throw Error('No restaurant id in URL');
       } else {
         return DBHelper.fetchRestaurantById(id)
           .then((restaurant) => {
