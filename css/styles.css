@@ -330,9 +330,9 @@ address p {
 
 body> header,
 [role="banner"] {
-  color: #bdbdbd; /* GMD Grey 400 */
+  color: #e0e0e0; /* GMD Grey 300 */
   text-align: center;
-  background-color: #263238; /* GMD Blue Grey 900 */
+  background-color: #004d40; /* GMD Teal 900 */
 }
 
 body> header h1 {
@@ -365,7 +365,9 @@ body> header h1,
 /* ========== #breadcrumb ========== */
 
 .inside nav {
-  background-color: #cfd8dc; /* GMD Blue Grey 100 */
+  background-color: #fff;
+  border-bottom: 1px solid #eceff1; /* GMD Blue Grey 50 */
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #breadcrumb {
@@ -423,12 +425,12 @@ body> header h1,
 .filter-options {
   text-align: center;
   padding: 1.25em 1rem;
-  background-color: #1976d2; /* GMD Blue 700 */
+  background-color: #004d40; /* GMD Teal 900 */
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
 #filter-legend {
-  color: #fff;
+  color: #e0e0e0; /* GMD Grey 300 */
   margin: 0 0 0.8em;
 }
 
@@ -552,7 +554,7 @@ body> header h1,
   font-weight: bold;
   text-align: left;
   padding-bottom: 1em!important;
-  border-bottom: 1px solid #e0e0e0; /* GMD Grey 300 */
+  border-bottom: 1px solid #eceff1; /* GMD Blue Grey 50 */
 }
 
 /* ========== #reviews-container ========== */
@@ -594,7 +596,7 @@ body> header h1,
 
 #reviews-list header {
   padding:  1em;
-  border-bottom: 1px solid #e0e0e0; /* GMD Grey 300 */
+  border-bottom: 1px solid #eceff1; /* GMD Blue Grey 50 */
 }
 
 #reviews-list h3 {
@@ -662,8 +664,8 @@ abbr[class|="stars"] {
 /* ========== #footer ========== */
 
 #footer {
-  background-color: #263238; /* GMD Blue Grey 900 */
-  color: #bdbdbd; /* GMD Grey 400 */
+  background-color: #004d40; /* GMD Teal 900 */
+  color: #e0e0e0; /* GMD Grey 300 */
   font-size: 0.8em;
   letter-spacing: 0.05em;
   padding: 1.5625em 1rem;
