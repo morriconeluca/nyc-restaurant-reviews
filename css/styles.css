@@ -431,6 +431,8 @@ body> header h1,
 
 #filter-legend {
   color: #e0e0e0; /* GMD Grey 300 */
+  font-weight: normal;
+  letter-spacing: 0.125em;
   margin: 0 0 0.8em;
 }
 
