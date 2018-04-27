@@ -121,7 +121,7 @@ class DBHelper {
   static formatSrcset(restaurant) {
     let srcsetStr = [];
     for (let w = 3; w < 9; w++) {
-      srcsetStr.push(DBHelper.imageUrlForRestaurant(restaurant, w*100));
+      srcsetStr.push(`${DBHelper.imageUrlForRestaurant(restaurant, w*100)} ${w*100}w`);
     }
     return srcsetStr.join(', ');
   }
