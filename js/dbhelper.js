@@ -109,21 +109,19 @@ class DBHelper {
   /**
    * Restaurant image URL.
    */
-  static imageUrlForRestaurant(restaurant) {
+  static imageUrlForRestaurant(restaurant, width) {
     const extension = restaurant.photograph.split('.').pop();
     const name = restaurant.photograph.slice(0, restaurant.photograph.indexOf(`.${extension}`));
-    return (`/img/${name}-800w.${extension}`);
+    return (`/img/${name}-${width}w.${extension}`);
   }
 
   /**
    * Restaurant image srcset.
    */
   static formatSrcset(restaurant) {
-    const extension = restaurant.photograph.split('.').pop();
-    const name = restaurant.photograph.slice(0, restaurant.photograph.indexOf(`.${extension}`));
     let srcsetStr = [];
     for (let w = 3; w < 9; w++) {
-      srcsetStr.push(`/img/${name}-${w*100}w.${extension} ${w*100}w`);
+      srcsetStr.push(DBHelper.imageUrlForRestaurant(restaurant, w*100));
     }
     return srcsetStr.join(', ');
   }
