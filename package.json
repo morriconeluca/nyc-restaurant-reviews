@@ -8,12 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/udacity/mws-restaurant-stage-1.git"
+    "url": "git@github.com:LucaMorricone/nyc-restaurant-reviews.git"
   },
   "author": "Luca Morricone ft. Udacity",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/udacity/mws-restaurant-stage-1/issues"
-  },
-  "homepage": "https://github.com/udacity/mws-restaurant-stage-1#readme"
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-image-resize": "^0.13.0",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-rename": "^1.2.2"
+  }
 }
