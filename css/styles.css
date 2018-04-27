@@ -734,11 +734,11 @@ abbr[class|="stars"] {
 
   #breadcrumb,
   #restaurant-container {
-    width: calc(50% + 1rem);
+    width: calc(50% + 0.5rem);
   }
 
   .inside #map-container {
-    width: calc(50% - 1rem);
+    width: calc(50% - 0.5rem);
   }
 
   #restaurant-container {
@@ -821,11 +821,11 @@ abbr[class|="stars"] {
 
   #breadcrumb,
   #restaurant-container {
-    width: calc(33.333333% + 1rem);
+    width: calc(33.333333% + 0.5rem);
   }
 
   .inside #map-container {
-    width: calc(66.666667% - 1rem);
+    width: calc(66.666667% - 0.5rem);
   }
 }
 

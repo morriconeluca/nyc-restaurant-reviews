@@ -5,9 +5,8 @@ const rename = require('gulp-rename');
 const del = require('del');
 
 gulp.task( 'optimize-bitmaps', () => {
-  for (let w = 3, q = 0.3; w < 8; w++) {
+  for (let w = 3, q = 0.3; w < 8; w++, q += 0.1) {
     optimizeBitmaps(w*100, q);
-    q += 0.1;
   }
   return optimizeBitmaps(800, 0.8);
 } );

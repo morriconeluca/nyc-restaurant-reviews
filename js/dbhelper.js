@@ -110,7 +110,22 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    const extension = restaurant.photograph.split('.').pop();
+    const name = restaurant.photograph.slice(0, restaurant.photograph.indexOf(`.${extension}`));
+    return (`/img/${name}-800w.${extension}`);
+  }
+
+  /**
+   * Restaurant image srcset.
+   */
+  static formatSrcset(restaurant) {
+    const extension = restaurant.photograph.split('.').pop();
+    const name = restaurant.photograph.slice(0, restaurant.photograph.indexOf(`.${extension}`));
+    let srcsetStr = [];
+    for (let w = 3; w < 9; w++) {
+      srcsetStr.push(`/img/${name}-${w*100}w.${extension} ${w*100}w`);
+    }
+    return srcsetStr.join(', ');
   }
 
   /**
