@@ -5,18 +5,20 @@ const rename = require('gulp-rename');
 const del = require('del');
 
 gulp.task( 'optimize-bitmaps', () => {
-  for (let w = 3; w < 6; w++) {
-    optimizeBitmaps(w*100);
+  for (let w = 3, q = 0.3; w < 8; w++) {
+    optimizeBitmaps(w*100, q);
+    q += 0.1;
   }
-  return optimizeBitmaps(600);
+  return optimizeBitmaps(800, 0.8);
 } );
 
-function optimizeBitmaps(width) {
+function optimizeBitmaps(width, quality) {
   return gulp.src( 'img_src/*.{gif,jpeg,jpg,png}' )
     .pipe( imageResize( {
-      width: width,
+      width,
+      imageMagick: true,
       filter: 'Catrom',
-      quality: 0.3
+      quality
     } ) )
     .pipe( imagemin( [
       imagemin.gifsicle( { interlaced: true } ),
