@@ -178,3 +178,22 @@ class DBHelper {
   }
 
 }
+
+/**
+ * Register Service Worker.
+ */
+(() => {
+  'use strict';
+  // Verify if Service Worker is supported.
+  if (!navigator.serviceWorker) {
+    console.log('Service Worker not supported');
+    return; // Exit from function.
+  }
+  navigator.serviceWorker.register('/sw.js')
+  .then(() => {
+    console.log('[SW] Registration successful');
+  })
+  .catch((error) => {
+    console.log('[SW] Registration failed, error:', error);
+  });
+})();
