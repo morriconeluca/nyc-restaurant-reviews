@@ -420,11 +420,41 @@ body> header h1,
   background-color: rgba(68,138,255,0.8); /* GMD Blue A200 */
 }
 
+#offline-alert {
+  margin: 0;
+}
+
+#map.offline {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+#map.offline> * {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
+}
+
+#map.offline p {
+  padding: 1.25em 1rem;
+  background-color: #fff;
+  box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
 /* ========== .filter-options ========== */
 
 .filter-options {
   text-align: center;
-  padding: 1.25em 1rem;
+  padding: 1em 1rem;
   background-color: #004d40; /* GMD Teal 900 */
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }

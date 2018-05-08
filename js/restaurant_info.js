@@ -1,4 +1,4 @@
-((w, d) => {
+((w, d, n) => {
   'use strict';
 
   if (!w.fetch) {
@@ -12,6 +12,9 @@
    * Initialize Google map, called from HTML with proper error handling.
    */
   w.initMap = () => {
+    if (!n.onLine) { // Check if offline.
+      return; // Exit from function.
+    }
     try {
       fetchRestaurantFromURL()
         .then((restaurant) => {
@@ -41,6 +44,41 @@
         console.log(error);
       }
   };
+
+  /**
+   * Fetch the page content when offline, as soon as the page is loaded.
+   */
+  if (!n.onLine) { // Check if offline.
+    d.addEventListener('DOMContentLoaded', () => {
+      initPage();
+      fillMapOfflineAlert();
+    });
+  }
+
+  /**
+   * Initialize the page whithout initialize Google Maps.
+   */
+  function initPage() {
+    fetchRestaurantFromURL()
+      .then((restaurant) => {
+        fillBreadcrumb(restaurant);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  /**
+   * Set map offline alert.
+   */
+  function fillMapOfflineAlert() {
+    const mapDOMElement = d.getElementById('map');
+    const mapOfflineAlert = d.createElement('p');
+    mapOfflineAlert.setAttribute('role', 'alert');
+    mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
+    mapDOMElement.classList.add('offline');
+    mapDOMElement.append(mapOfflineAlert);
+  }
 
   /**
    * Get current restaurant from page URL with proper error handling.
@@ -80,9 +118,6 @@
     // Add a more meaningful title to the page for better accessibility.
     const title = d.querySelector('title');
     title.innerHTML = `${restaurant.name} - Restaurant Info and Reviews`;
-
-    const mapLabel = d.getElementById('map-label');
-    mapLabel.innerHTML = `Google Maps Widget: shows the ${restaurant.name} location`;
 
     const name = d.getElementById('restaurant-name');
     name.innerHTML = restaurant.name;
@@ -214,7 +249,23 @@
   function initMapAccessibility() {
     // This event fires when the visible tiles have finished loading.
     const listenerTiles = map.addListener('tilesloaded', () => {
+      const mapContainer = d.getElementById('map-container');
+      // Add a skip map link.
+      const skipMap = d.createElement('a');
+      skipMap.className = 'skip-link button';
+      skipMap.href = '#main-content';
+      skipMap.innerHTML = 'Skip the map';
+      mapContainer.insertAdjacentElement('afterbegin', skipMap);
+      // Add a map label.
+      const mapLabel = d.createElement('h2');
+      mapLabel.id = 'map-label';
+      mapLabel.className = 'sr-only';
+      mapLabel.innerHTML = 'Google Maps Widget: shows the restaurant location';
+      mapContainer.insertAdjacentElement('afterbegin', mapLabel);
+      // Add role to map element.
       const mapDOMElement = d.getElementById('map');
+      mapDOMElement.setAttribute('role', 'application');
+      // Add aria-lebelledBy to the div focusable with tab.
       const div = d.querySelector('#map div[tabindex="0"]');
       div.setAttribute('aria-labelledby', 'map-label');
       // Highlight when map DOM element is onfocus.
@@ -254,4 +305,4 @@
     breadcrumb.appendChild(li);
   }
 
-})(window, document);
+})(window, document, navigator);

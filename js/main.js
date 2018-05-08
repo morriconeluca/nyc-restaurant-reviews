@@ -1,4 +1,4 @@
-((w, d) => {
+((w, d, n) => {
   'use strict';
 
   if (!w.fetch) {
@@ -11,13 +11,48 @@
     tilesLoaded = false;
 
   /**
+   * Initialize Google map, called from HTML.
+   */
+  w.initMap = () => {
+    if(!n.onLine) return;
+    let loc = {
+      lat: 40.722216,
+      lng: -73.987501
+    };
+    map = new google.maps.Map(d.getElementById('map'), {
+      center: loc,
+      zoom: 12,
+      scrollwheel: false,
+      keyboardShortcuts: false // Disable Google Maps keyboard UI.
+    });
+    updateRestaurants();
+    initMapAccessibility();
+  };
+
+  /**
    * Fetch neighborhoods and cuisines as soon as the page is loaded.
    */
   d.addEventListener('DOMContentLoaded', () => {
     addSelectListener();
     fetchNeighborhoods();
     fetchCuisines();
+    if (!n.onLine) { // Check if offline.
+      fillMapOfflineAlert();
+      updateRestaurants();
+    }
   });
+
+  /**
+   * Set map offline alert.
+   */
+  function fillMapOfflineAlert() {
+    const mapDOMElement = d.getElementById('map');
+    const mapOfflineAlert = d.createElement('p');
+    mapOfflineAlert.setAttribute('role', 'alert');
+    mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
+    mapDOMElement.classList.add('offline');
+    mapDOMElement.append(mapOfflineAlert);
+  }
 
   /**
    * Add event listener on select elements to filter results.
@@ -78,30 +113,28 @@
   }
 
   /**
-   * Initialize Google map, called from HTML.
-   */
-  w.initMap = () => {
-    let loc = {
-      lat: 40.722216,
-      lng: -73.987501
-    };
-    map = new google.maps.Map(d.getElementById('map'), {
-      center: loc,
-      zoom: 12,
-      scrollwheel: false,
-      keyboardShortcuts: false // Disable Google Maps keyboard UI.
-    });
-    updateRestaurants();
-    initMapAccessibility();
-  };
-
-  /**
    * Fix some accessibility issue with Google map.
    */
   function initMapAccessibility() {
     // This event fires when the visible tiles have finished loading.
     const listenerTiles = map.addListener('tilesloaded', () => {
+      const mapContainer = d.getElementById('map-container');
+      // Add a skip map link.
+      const skipMap = d.createElement('a');
+      skipMap.className = 'skip-link button';
+      skipMap.href = '#main-content';
+      skipMap.innerHTML = 'Skip the map';
+      mapContainer.insertAdjacentElement('afterbegin', skipMap);
+      // Add a map label.
+      const mapLabel = d.createElement('h2');
+      mapLabel.id = 'map-label';
+      mapLabel.className = 'sr-only';
+      mapLabel.innerHTML = 'Google Maps Widget: shows restaurants location';
+      mapContainer.insertAdjacentElement('afterbegin', mapLabel);
+      // Add role to map element.
       const mapDOMElement = d.getElementById('map');
+      mapDOMElement.setAttribute('role', 'application');
+      // Add aria-lebelledBy to the div focusable with tab.
       const div = d.querySelector('#map div[tabindex="0"]');
       div.setAttribute('aria-labelledby', 'map-label');
       // Highlight when map DOM element is onfocus.
@@ -155,9 +188,12 @@
     // Remove all restaurants.
     const ul = d.getElementById('restaurants-list');
     ul.innerHTML = '';
-    /* Remove all map markers. When a DOM Element is removed, its listeners are removed from memory too. */
-    markers.forEach(m => m.setMap(null));
-    markers = [];
+    // If offline, markers could be not initialized.
+    if (markers.length) {
+      /* Remove all map markers. When a DOM Element is removed, its listeners are removed from memory too. */
+      markers.forEach(m => m.setMap(null));
+      markers = [];
+    }
   }
 
   /**
@@ -175,7 +211,7 @@
       let s = (restaurants.length > 1) ? 's' : '';
       notice.innerHTML = `${restaurants.length} restaurant${s} found`;
     }
-    addMarkersToMap(restaurants);
+    if (n.onLine) addMarkersToMap(restaurants);
   }
 
   /**
@@ -283,4 +319,4 @@
     }, 150);
   }
 
-})(window, document);
+})(window, document, navigator);
