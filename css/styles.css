@@ -125,6 +125,7 @@ select::-ms-expand {
 select {
   -moz-appearance: none; /* 1 */
   -webkit-appearance: none; /* 2 */
+  appearance: none; /* 1, 2 */
   height: 2.301468em; /* 3 */
   color: inherit;
   background-color: #fff;
