@@ -130,7 +130,7 @@ class DBHelper {
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
-    return (`./restaurant.html?id=${restaurant.id}`);
+    return (`/restaurant.html?id=${restaurant.id}`);
   }
 
   /**
@@ -182,18 +182,18 @@ class DBHelper {
 /**
  * Register Service Worker.
  */
-(() => {
+((n) => {
   'use strict';
-  // Verify if Service Worker is supported.
-  if (!navigator.serviceWorker) {
+  // Check if Service Worker is supported.
+  if (!n.serviceWorker) {
     console.log('Service Worker not supported');
     return; // Exit from function.
   }
-  navigator.serviceWorker.register('/sw.js')
+  n.serviceWorker.register('/sw.js')
   .then(() => {
     console.log('[SW] Registration successful');
   })
   .catch((error) => {
     console.log('[SW] Registration failed, error:', error);
   });
-})();
+})(navigator);
