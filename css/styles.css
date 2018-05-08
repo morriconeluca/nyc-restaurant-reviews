@@ -181,11 +181,6 @@ button,
 .skip-link {
   position: absolute;
   z-index: 100;
-  -webkit-transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
-  transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
-  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,end);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,end);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
   -webkit-transform: scale(0);
   -ms-transform: scale(0);
   transform: scale(0);
@@ -203,11 +198,9 @@ html [type="button"]:not([disabled]):hover,
 }
 
 .skip-link:focus {
-  -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
-  transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
-  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,start);
-  transition: transform 0.3s ease, opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
   -webkit-transform: scale(1);
   -ms-transform: scale(1);
   transform: scale(1);
