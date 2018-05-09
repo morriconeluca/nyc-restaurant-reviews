@@ -55,8 +55,9 @@ self.addEventListener('activate', (event) => {
  * Cache falling back to the network.
  */
 self.addEventListener('fetch', (event) => {
-  // The fetch handler serves responses only for same-origin resources.
-  if (event.request.url.startsWith(self.location.origin)) {
+  /* The fetch handler serves responses only for same-origin resources and skip requests for 'restaurant.html' to avoid duplicates in cache. */
+  if (event.request.url.startsWith(self.location.origin)
+  && (event.request.url.indexOf('restaurant.html') === -1)) {
     event.respondWith(
       caches.match(event.request)
         .then((response) => {
