@@ -15,19 +15,18 @@
 </head>
 
 <body>
-  <a class="skip-link button" href="#main-content">Skip to main content</a>
+  <a class="skip-link button" href="#filter-options">Skip to main content</a>
 
   <header>
     <h1>Restaurant Reviews</h1>
   </header>
 
-  <section id="map-container">
-    <div id="map"></div>
-  </section>
-
   <main id="main-content" role="main">
+    <aside id="map-container">
+      <div id="map"></div>
+    </aside>
     <!-- For search facilities, authors SHOULD use the search role and not the generic form role. https://www.w3.org/WAI/PF/aria-1.1/roles#form -->
-    <section class="filter-options" role="search">
+    <section id="filter-options" role="search">
       <div class="container">
         <h2 id="filter-legend">Filter Results</h2>
         <select id="neighborhoods-select" name="neighborhoods" aria-label="Select a neighborhood" aria-describedby="filter-legend">

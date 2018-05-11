@@ -444,9 +444,9 @@ body> header h1,
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
-/* ========== .filter-options ========== */
+/* ========== #filter-options ========== */
 
-.filter-options {
+#filter-options {
   text-align: center;
   padding: 1em 1rem;
   background-color: #004d40; /* GMD Teal 900 */
@@ -460,15 +460,15 @@ body> header h1,
   margin: 0 0 0.8em;
 }
 
-.filter-options select {
+#filter-options select {
   width: 100%;
 }
 
-.filter-options select + select {
+#filter-options select + select {
   margin-top: 0.8em;
 }
 
-.filter-options select:not([disabled]):focus {
+#filter-options select:not([disabled]):focus {
   outline-color: #fff;
 }
 
@@ -790,7 +790,7 @@ abbr[class|="stars"] {
 
 
 @media screen and (min-width: 768px) {
-  .filter-options .container {
+  #filter-options .container {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -801,7 +801,7 @@ abbr[class|="stars"] {
     align-items: center;
   }
 
-  .filter-options .container> * {
+  #filter-options .container> * {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -818,11 +818,11 @@ abbr[class|="stars"] {
   }
 
   #filter-legend,
-  .filter-options select + select {
+  #filter-options select + select {
     margin: 0;
   }
 
-  .filter-options .container select {
+  #filter-options .container select {
     margin-left: 1rem;
   }
 
@@ -859,7 +859,7 @@ abbr[class|="stars"] {
     margin-left: auto;
   }
 
-  .filter-options .container {
+  #filter-options .container {
     max-width: 1332px;
   }
 

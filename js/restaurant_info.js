@@ -253,7 +253,7 @@
       // Add a skip map link.
       const skipMap = d.createElement('a');
       skipMap.className = 'skip-link button';
-      skipMap.href = '#main-content';
+      skipMap.href = '#restaurant-container';
       skipMap.innerHTML = 'Skip the map';
       mapContainer.insertAdjacentElement('afterbegin', skipMap);
       // Add a map label.
