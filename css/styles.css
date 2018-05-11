@@ -320,6 +320,10 @@ address p {
   margin: 1.25em 0;
 }
 
+.no-wrap {
+  white-space: nowrap;
+}
+
 /* ========== .header ========== */
 
 body> header,
@@ -711,6 +715,53 @@ abbr[class|="stars"] {
 #footer a[href]:hover {
   color: #448aff; /* GMD Blue A200 */
   text-decoration: none;
+}
+
+/* ========== #update-alert ========== */
+
+#update-alert {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  position: fixed;
+  padding: 0 0.5rem;
+  text-align: center;
+  color: #e0e0e0; /* GMD Grey 300 */
+  background-color: #263238; /* GMD Blue Grey 900 */
+  -webkit-transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
+  transition: opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
+  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,end);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,end);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,end), -webkit-transform 0.3s ease;
+  -webkit-transform: translateY(7.229765em);
+  -ms-transform: translateY(7.229765em);
+  transform: translateY(7.229765em);
+  opacity: 0;
+}
+
+#update-alert p {
+  padding: 0 0.5rem;
+  display: inline-block;
+}
+
+#update-alert p:first-child {
+  margin-bottom: 0;
+}
+
+#update-alert button + button {
+  margin-left: 1rem;
+}
+
+#update-alert.open {
+  -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,start);
+  transition: transform 0.3s ease, opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+  opacity: 1;
 }
 
 /* ========== RESPONSIVE ========== */

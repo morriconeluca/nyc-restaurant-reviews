@@ -182,18 +182,107 @@ class DBHelper {
 /**
  * Register Service Worker.
  */
-((n) => {
+((d, n) => {
   'use strict';
   // Check if Service Worker is supported.
   if (!n.serviceWorker) {
     console.log('Service Worker not supported');
     return; // Exit from function.
   }
-  n.serviceWorker.register('/sw.js')
-  .then(() => {
-    console.log('[SW] Registration successful');
-  })
-  .catch((error) => {
-    console.log('[SW] Registration failed, error:', error);
+  d.addEventListener('DOMContentLoaded', () => {
+    n.serviceWorker.register('/sw.js')
+      .then((reg) => {
+        // Exit if the current page wasn't loaded via a SW.
+        if (!n.serviceWorker.controller) return;
+        // If there's an updated worker already waiting.
+        if (reg.waiting) {
+          SWUpdateAlert(reg.waiting);
+          return;
+        }
+        // If there's an updated worker installing.
+        if (reg.installing) {
+          // If one arrives, track its progress.
+          trackProgressOf(reg.installing);
+          return;
+        }
+        // Otherwise, listen for new installing worker arriving.
+        reg.addEventListener('updatefound', () => {
+          // If one arrives, track its progress.
+          trackProgressOf(reg.installing);
+        });
+      })
+      .catch((error) => {
+        console.log('[SW] Registration failed, error:', error);
+      });
+
+      /**
+       * Set, show and handle SW update alert.
+       */
+      function SWUpdateAlert(worker) {
+        trackControllerChange();
+        // Set SW update alert.
+        const div = d.createElement('div');
+        div.id = 'update-alert';
+        div.setAttribute('role', 'alert');
+        const notice = d.createElement('p');
+        notice.innerHTML = 'New version available.';
+        const buttons = d.createElement('p');
+        buttons.className = 'no-wrap';
+        const refresh = d.createElement('button');
+        refresh.type = 'button';
+        refresh.innerHTML = 'REFRESH';
+        const dismiss = d.createElement('button');
+        dismiss.type = 'button';
+        dismiss.innerHTML = 'DISMISS';
+        buttons.append(refresh);
+        buttons.append(dismiss);
+        div.append(notice);
+        div.append(buttons);
+        d.body.append(div);
+        // Set a timeout to make animation visible.
+        setTimeout(() => {
+          div.className = 'open';
+          /* 1. Set a timeout to listen the alert text in right order with screen readers. 2. On load, sometimes Google Maps grabs the focus, a timeout fixes this behaviour. */
+          setTimeout(() => {
+            refresh.focus(); // Move focus to the refresh button.
+          },300);
+        },150);
+        // When refresh button is clicked send a message to new SW.
+        refresh.addEventListener('click', () => {
+          worker.postMessage({action: 'skipWaiting'});
+        });
+        // Dismiss and hide the alert.
+        dismiss.addEventListener('click', () => {
+          div.classList.remove('open');
+          d.body.focus(); // Move focus to the body.
+          div.setAttribute('aria-hidden', true);
+          refresh.tabIndex = -1;
+          dismiss.tabIndex = -1;
+        });
+      }
+
+      /**
+       * Track the progress of new SW.
+       */
+      function trackProgressOf(worker) {
+        worker.addEventListener('statechange', function() {
+          if (this.state == 'installed') {
+            SWUpdateAlert(this);
+          }
+        });
+      }
+
+      /**
+       * Track change of controller and reload when new SW is activated.
+       */
+      function trackControllerChange() {
+        /* Ensure refresh is only called once. This works around a bug in "force update on reload". */
+        let refreshing;
+        n.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          location.reload(true);
+          refreshing = true;
+        });
+      }
   });
-})(navigator);
+})(document, navigator);

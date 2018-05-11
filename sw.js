@@ -1,8 +1,8 @@
-const SW_VERSION = 1,
+const SW_VERSION = 2,
   ORIGIN = 'NYC-RR-',
   STATIC_CACHE = `${ORIGIN}static-cache-v${SW_VERSION}`,
   DYNAMIC_CACHE = `${ORIGIN}dynamic-cache-v${SW_VERSION}`,
-  RESOURCE_TO_CACHE = [
+  RESOURCES_TO_CACHE = [
     '/',
     'index.html',
     'restaurant.html',
@@ -13,11 +13,14 @@ const SW_VERSION = 1,
     '/js/restaurant_info.js'
 ];
 
+/**
+ * Cache the main assets while installing SW.
+ */
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        return cache.addAll(RESOURCE_TO_CACHE);
+        return cache.addAll(RESOURCES_TO_CACHE);
       })
       .catch((error) => {
         console.log('[SW] Installation failed, error:', error);
@@ -26,7 +29,7 @@ self.addEventListener('install', (event) => {
 });
 
 /**
- * Remove outdated caches.
+ * Remove outdated caches while a new SW is activating.
  */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -52,7 +55,7 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * Cache falling back to the network.
+ * Cache other resources dynamically with a fallback to the network.
  */
 self.addEventListener('fetch', (event) => {
   /* The fetch handler serves responses only for same-origin resources and skip requests for 'restaurant.html' to avoid duplicates in cache. */
@@ -83,6 +86,20 @@ self.addEventListener('fetch', (event) => {
         })
         .catch((error) => {
           console.log('[SW] Something failed while matching a request, error', error);
+        })
+    );
+  }
+});
+
+/**
+ * Listen messages from client.
+ */
+self.addEventListener('message', function(event) {
+  if (event.data.action === 'skipWaiting') {
+    event.waitUntil(
+      self.skipWaiting() // Activate a new SW that is waiting.
+        .catch((error) => {
+          console.log('[SW] Something failed while skipping wait, error', error);
         })
     );
   }
