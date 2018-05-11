@@ -277,7 +277,7 @@
     // Create an overlay object for assign an id to markerLayer.
     const overlay = new google.maps.OverlayView();
     overlay.draw = function () {
-      this.getPanes().markerLayer.id='markerLayer'; // TODO: To test.
+      this.getPanes().markerLayer.id='markerLayer';
     };
     overlay.setMap(map);
     if (!tilesLoaded) {
@@ -293,11 +293,13 @@
   }
 
   /**
-   * TODO: Add documentation.
+   * Make markers focusable.
    */
   function addAccessibilityToMarkers(restaurants) {
     setTimeout(() => {
+      // Markers are coded with area tags.
       const areas = d.querySelectorAll('[id^="gmimap"]> area');
+      /* Seems impossible to style marker directly, but to any marker corresponds an img tag and the order is the same. */
       const layers = d.querySelectorAll('#markerLayer img');
       for (let i = 0; i < areas.length; i++) {
         areas[i].tabIndex = 0;
@@ -307,6 +309,7 @@
         areas[i].addEventListener('blur', () => {
           layers[i].classList.remove('focused');
         });
+        // Google Maps allows only click event on markers.
         areas[i].addEventListener('keydown', (e) => {
           if (e.keyCode === 13) {
             w.location.href = DBHelper.urlForRestaurant(restaurants[i]);
