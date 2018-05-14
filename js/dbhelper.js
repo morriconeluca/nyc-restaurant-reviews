@@ -194,6 +194,19 @@ class DBHelper {
       .then((reg) => {
         // Exit if the current page wasn't loaded via a SW.
         if (!n.serviceWorker.controller) return;
+        // Listening messages from SW.
+        n.serviceWorker.addEventListener('message', (event) => {
+          /* When client receives the 'refreshed' message, the boolean flag 'dismissed', which is in the session storage of this client, will be deleted. N.B. The new SW sends this message to all clients. Look at sw.js to inspect. */
+          if (event.data.action === 'refreshed') {
+            sessionStorage.removeItem('dismissed');
+          }
+          /* When client receives the 'dismissed' message, the boolean flag 'dismissed', which is in the session storage of this client, will be set to true. N.B. The current SW sends this message to all clients. Look at sw.js to inspect. */
+          if (event.data.action === 'dismissed') {
+            sessionStorage.setItem('dismissed', true);
+          }
+        });
+        /* Exit if the update of SW was dismissed in this session previously. */
+        if (sessionStorage.dismissed) return;
         // If there's an updated worker already waiting.
         if (reg.waiting) {
           SWUpdateAlert(reg.waiting);
@@ -245,19 +258,20 @@ class DBHelper {
           /* 1. Set a timeout to listen the alert text in right order with screen readers. 2. On load, sometimes Google Maps grabs the focus, a timeout fixes this behaviour. */
           setTimeout(() => {
             refresh.focus(); // Move focus to the refresh button.
+            /* Dismiss, hide and remove the alert after 7 sec. The alert will be showed again on load of a next page, because the user did not answer expressally. */
+            setTimeout(() => {
+              if (!sessionStorage.dismissed) hideAlert(div);
+            },5000);
           },300);
         },150);
-        // When refresh button is clicked send a message to new SW.
+        /* When refresh button is clicked, the client sends a message to the new SW that is waiting. */
         refresh.addEventListener('click', () => {
-          worker.postMessage({action: 'skipWaiting'});
+          worker.postMessage({action: 'refresh'});
         });
-        // Dismiss and hide the alert.
+        /* When dismiss button is clicked, the client sends a message to the current SW that actually is active yet. */
         dismiss.addEventListener('click', () => {
-          div.classList.remove('open');
-          d.body.focus(); // Move focus to the body.
-          div.setAttribute('aria-hidden', true);
-          refresh.tabIndex = -1;
-          dismiss.tabIndex = -1;
+          n.serviceWorker.controller.postMessage({action: 'dismiss'});
+          hideAlert(div); // Dismiss, hide and remove the alert.
         });
       }
 
@@ -283,6 +297,17 @@ class DBHelper {
           location.reload(true);
           refreshing = true;
         });
+      }
+
+      /**
+       * Dismiss, hide and remove the alert.
+       */
+      function hideAlert(panel) {
+        panel.classList.remove('open');
+        d.body.focus(); // Move focus to the body.
+        setTimeout(() => {
+          panel.parentNode.removeChild(panel);
+        }, 300);
       }
   });
 })(document, navigator);
