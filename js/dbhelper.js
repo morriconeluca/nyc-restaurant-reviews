@@ -264,6 +264,7 @@ class DBHelper {
         div.append(notice);
         div.append(buttons);
         d.body.append(div);
+
         // Set a timeout to make animation visible.
         setTimeout(() => {
           div.className = 'open';
@@ -276,10 +277,12 @@ class DBHelper {
             },5000);
           },300);
         },1000);
+
         /* When refresh button is clicked, the client sends a message to the new SW that is waiting. */
         refresh.addEventListener('click', () => {
           worker.postMessage({action: 'refresh'});
         });
+
         /* When dismiss button is clicked, the client sends a message to the current SW that actually is active yet. */
         dismiss.addEventListener('click', () => {
           n.serviceWorker.controller.postMessage({action: 'dismiss'});

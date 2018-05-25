@@ -283,40 +283,49 @@
     // This event fires when the visible tiles have finished loading.
     const listenerTiles = map.addListener('tilesloaded', () => {
       const mapContainer = d.getElementById('map-container');
+
       // Add a skip map link.
       const skipMap = d.createElement('a');
       skipMap.className = 'skip-link button';
       skipMap.href = '#restaurant-container';
       skipMap.innerHTML = 'Skip the map';
       mapContainer.insertAdjacentElement('afterbegin', skipMap);
+
       // Add a map label.
       const mapLabel = d.createElement('h2');
       mapLabel.id = 'map-label';
       mapLabel.className = 'sr-only';
       mapLabel.innerHTML = 'Google Maps Widget: shows the restaurant location';
       mapContainer.insertAdjacentElement('afterbegin', mapLabel);
+
       // Add role to map element.
       const mapDOMElement = d.getElementById('map');
       mapDOMElement.setAttribute('role', 'application');
+
       // Add aria-lebelledBy to the div focusable with tab.
       const div = d.querySelector('#map div[tabindex="0"]');
       div.setAttribute('aria-labelledby', 'map-label');
+
       // Highlight when map DOM element is onfocus.
       div.addEventListener('focus', () => {
         mapDOMElement.classList.add('focused');
       });
+
       // Remove highlight when map DOM element is onblur.
       div.addEventListener('blur', () => {
         mapDOMElement.classList.remove('focused');
       });
+
       /* Enable Google Maps keyboard UI, when map DOM element or any of his children is onfocus. */
       mapDOMElement.addEventListener('focus', () => {
         map.setOptions({keyboardShortcuts: true});
       }, true);
+
       /* Disable Google Maps keyboard UI, when map DOM element or any of his children is onblur. */
       mapDOMElement.addEventListener('blur', () => {
         map.setOptions({keyboardShortcuts: false});
       }, true);
+
       // Remove event listener.
       google.maps.event.removeListener(listenerTiles);
     });
@@ -331,6 +340,7 @@
     const a = d.createElement('a');
     const url = DBHelper.urlForRestaurant(restaurant);
     a.href = url;
+
     /* Here the title attribute is to avoid, and the link text is enough for accessibility. See above about title. */
     a.setAttribute('aria-current', 'page' );
     a.innerHTML = restaurant.name;
