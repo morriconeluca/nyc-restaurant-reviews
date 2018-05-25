@@ -17,16 +17,16 @@ class DBHelper {
    */
   static fetchRestaurants() {
     return fetch(DBHelper.DATABASE_URL)
-      .then((response) => {
+      .then(response => {
         if (!response.ok) {
           throw Error(`Request failed. Returned status of ${response.statusText}`);
         }
         return response.json();
       })
-      .then((json) => {
+      .then(json => {
         return json.restaurants;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -37,14 +37,14 @@ class DBHelper {
   static fetchNeighborhoods() {
     // Fetch all restaurants.
     return DBHelper.fetchRestaurants()
-      .then((restaurants) => {
+      .then(restaurants => {
         // Get all neighborhoods from all restaurants.
         const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
         // Remove duplicates from neighborhoods.
         const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) === i);
         return uniqueNeighborhoods;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -55,14 +55,14 @@ class DBHelper {
   static fetchCuisines() {
     // Fetch all restaurants.
     return DBHelper.fetchRestaurants()
-      .then((restaurants) => {
+      .then(restaurants => {
         // Get all cuisines from all restaurants.
         const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
         // Remove duplicates from cuisines.
         const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) === i);
         return uniqueCuisines;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -73,7 +73,7 @@ class DBHelper {
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood) {
     // Fetch all restaurants.
     return DBHelper.fetchRestaurants()
-      .then((restaurants) => {
+      .then(restaurants => {
         let results = restaurants;
         if (cuisine != 'all') { // Filter by cuisine.
           results = results.filter(r => r.cuisine_type === cuisine);
@@ -83,7 +83,7 @@ class DBHelper {
         }
         return results;
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -94,14 +94,14 @@ class DBHelper {
   static fetchRestaurantById(id) {
     // Fetch all restaurants with proper error handling.
     return DBHelper.fetchRestaurants()
-      .then((restaurants) => {
+      .then(restaurants => {
         const restaurant = restaurants.find(r => r.id == id);
         if (!restaurant) { // Restaurant does not exist in the database.
           throw Error('Restaurant does not exist');
         }
         return restaurant; // Got the restaurant.
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -153,11 +153,11 @@ class DBHelper {
   static fetchRestaurantByCuisine(cuisine) {
     // Fetch all restaurants.
     return DBHelper.fetchRestaurants()
-      .then((restaurants) => {
+      .then(restaurants => {
         // Filter restaurants to have only given cuisine type.
         return restaurants.filter(r => r.cuisine_type == cuisine);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -168,11 +168,11 @@ class DBHelper {
   static fetchRestaurantByNeighborhood(neighborhood) {
     // Fetch all restaurants.
     return DBHelper.fetchRestaurants()
-      .then((restaurants) => {
+      .then(restaurants => {
         // Filter restaurants to have only given neighborhood.
         return restaurants.filter(r => r.neighborhood == neighborhood);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -203,11 +203,11 @@ class DBHelper {
       return; // Exit from function.
     }
     n.serviceWorker.register('/sw.js')
-      .then((reg) => {
+      .then(reg => {
         // Exit if the current page wasn't loaded via a SW.
         if (!n.serviceWorker.controller) return;
         // Listening messages from SW.
-        n.serviceWorker.addEventListener('message', (event) => {
+        n.serviceWorker.addEventListener('message', event => {
           /* When client receives the 'refreshed' message, the boolean flag 'dismissed', which is in the session storage of this client, will be deleted. N.B. The new SW sends this message to all clients. Look at sw.js to inspect. */
           if (event.data.action === 'refreshed') {
             sessionStorage.removeItem('dismissed');
@@ -236,7 +236,7 @@ class DBHelper {
           trackProgressOf(reg.installing);
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('[SW] Registration failed, error:', error);
       });
 

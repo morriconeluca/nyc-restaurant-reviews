@@ -16,7 +16,7 @@
       return; // Exit from function.
     }
     fetchRestaurantFromURL()
-      .then((restaurant) => {
+      .then(restaurant => {
         if (!restaurant) {
           fillError404HTML();
           return; // Exit from function.
@@ -40,7 +40,7 @@
         });
         fillBreadcrumb(restaurant);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
@@ -59,7 +59,7 @@
    */
   function initPage() {
     fetchRestaurantFromURL()
-      .then((restaurant) => {
+      .then(restaurant => {
         if (!restaurant) {
           fillError404HTML();
           return; // Exit from function.
@@ -67,7 +67,7 @@
         fillBreadcrumb(restaurant);
         fillMapOfflineAlert();
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -125,13 +125,13 @@
       return; // No id found in URL.
     }
     return DBHelper.fetchRestaurantById(id)
-      .then((restaurant) => {
+      .then(restaurant => {
         if (restaurant) {
           fillRestaurantHTML(restaurant);
           return restaurant;
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }

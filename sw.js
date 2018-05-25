@@ -22,13 +22,13 @@
   /**
    * Cache the main assets while installing SW.
    */
-  s.addEventListener('install', (event) => {
+  s.addEventListener('install', event => {
     event.waitUntil(
       caches.open(STATIC_CACHE)
-        .then((cache) => {
+        .then(cache => {
           return cache.addAll(RESOURCES_TO_CACHE);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('[SW] Installation failed, error:', error);
         })
     );
@@ -37,15 +37,15 @@
   /**
    * Remove outdated caches while a new SW is activating.
    */
-  s.addEventListener('activate', (event) => {
+  s.addEventListener('activate', event => {
     event.waitUntil(
       caches.keys()
-        .then((cacheNames) => {
+        .then(cacheNames => {
           return Promise.all(
-            cacheNames.filter((cacheName) => {
+            cacheNames.filter(cacheName => {
               // Caches are shared across the whole origin.
               return (cacheName.startsWith(ORIGIN) && cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE);
-            }).map((cacheName) => {
+            }).map(cacheName => {
               return caches.delete(cacheName);
             })
           );
@@ -54,7 +54,7 @@
           /* Allow the active service worker to set itself as the controller for all clients within its scope. This triggers a "controllerchange" event on navigator.serviceWorker in any clients that become controlled by this service worker. https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim */
           return s.clients.claim();
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('[SW] Activation failed, error:', error);
         })
     );
@@ -63,41 +63,41 @@
   /**
    * Cache other resources dynamically with a fallback to the network.
    */
-  s.addEventListener('fetch', (event) => {
+  s.addEventListener('fetch', event => {
     /* The fetch handler serves responses only for same-origin resources. */
     if (event.request.url.startsWith(s.location.origin)) {
       event.respondWith(
         caches.match(event.request)
-          .then((response) => {
+          .then(response => {
             if (event.request.url.indexOf('restaurant.html') !== -1
             && event.request.url.search(/id=./) === -1) {
               return caches.match('/404.html');
             }
             if (response) return response;
             return caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
+              .then(cache => {
                 return fetch(event.request)
-                  .then((response) => {
+                  .then(response => {
                     if (response.status === 404) {
                       return caches.match('/404.html');
                     }
                     cache.put(event.request, response.clone())
-                      .catch((error) => {
+                      .catch(error => {
                         /* In some cases dynamic caching fails: e.g. it's not possible to cache a resource because a "DOMException: Quota exceeded" error fires. */
                         console.log('[SW] Dynamic caching failed, error', error, event.request.url);
                       });
                     return response;
                   })
-                  .catch((error) => {
+                  .catch(error => {
                     console.log('[SW] Fetch request failed, error', error);
                     return caches.match('/offline.html');
                   });
               })
-              .catch((error) => {
+              .catch(error => {
                 console.log('[SW] Opening dynamic cache failed, error', error);
               });
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('[SW] Something failed while matching a request, error', error);
           })
       );
@@ -115,7 +115,7 @@
             /* After receiving a message from one client, the new SW turns the message to all clients. */
             sendMessageToClients('refreshed');
           })
-          .catch((error) => {
+          .catch(error => {
             console.log('[SW] Something failed while skipping wait, error', error);
           })
       );
@@ -134,12 +134,12 @@
   function sendMessageToClients(message) {
     /* Get a list of SW Client objects, and send a message to everyone. */
     s.clients.matchAll()
-      .then((clients) => {
-        clients.forEach((client) => {
+      .then(clients => {
+        clients.forEach(client => {
           client.postMessage({action: message});
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('[SW] Something failed while sending message to clients, error', error);
       });
   }

@@ -94,7 +94,7 @@
   function fetchCuisines() {
     DBHelper.fetchCuisines()
       .then(fillCuisinesHTML)
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
@@ -181,11 +181,11 @@
     const neighborhood = nSelect[nIndex].value;
 
     DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood)
-      .then((restaurants) => {
+      .then(restaurants => {
         resetRestaurants();
         fillRestaurantsHTML(restaurants);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
