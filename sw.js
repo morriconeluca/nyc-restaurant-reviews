@@ -1,18 +1,22 @@
 ((s) => {
   'use strict';
-  const SW_VERSION = 2,
+  const SW_VERSION = 1,
     ORIGIN = 'NYC-RR-',
     STATIC_CACHE = `${ORIGIN}static-cache-v${SW_VERSION}`,
     DYNAMIC_CACHE = `${ORIGIN}dynamic-cache-v${SW_VERSION}`,
     RESOURCES_TO_CACHE = [
       '/',
-      'index.html',
-      'restaurant.html',
+      '/index.html',
+      '/restaurant.html',
       '/css/normalize.css',
       '/css/styles.css',
       '/js/dbhelper.js',
       '/js/main.js',
-      '/js/restaurant_info.js'
+      '/js/restaurant_info.js',
+      '/404.html',
+      '/offline.html',
+      /* Unfortunally Service Worker 'fetch' event does not trigger for favicons in Chrome. This bug is still open. https://bugs.chromium.org/p/chromium/issues/detail?id=448427 */
+      '/favicon.ico'
   ];
 
   /**
@@ -60,17 +64,23 @@
    * Cache other resources dynamically with a fallback to the network.
    */
   s.addEventListener('fetch', (event) => {
-    /* The fetch handler serves responses only for same-origin resources and skip requests for 'restaurant.html' to avoid duplicates in cache. */
-    if (event.request.url.startsWith(s.location.origin)
-    && (event.request.url.indexOf('restaurant.html') === -1)) {
+    /* The fetch handler serves responses only for same-origin resources. */
+    if (event.request.url.startsWith(s.location.origin)) {
       event.respondWith(
         caches.match(event.request)
           .then((response) => {
+            if (event.request.url.indexOf('restaurant.html') !== -1
+            && event.request.url.search(/id=./) === -1) {
+              return caches.match('/404.html');
+            }
             if (response) return response;
             return caches.open(DYNAMIC_CACHE)
               .then((cache) => {
                 return fetch(event.request)
                   .then((response) => {
+                    if (response.status === 404) {
+                      return caches.match('/404.html');
+                    }
                     cache.put(event.request, response.clone())
                       .catch((error) => {
                         /* In some cases dynamic caching fails: e.g. it's not possible to cache a resource because a "DOMException: Quota exceeded" error fires. */
@@ -80,6 +90,7 @@
                   })
                   .catch((error) => {
                     console.log('[SW] Fetch request failed, error', error);
+                    return caches.match('/offline.html');
                   });
               })
               .catch((error) => {

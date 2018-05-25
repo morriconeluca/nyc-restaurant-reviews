@@ -15,34 +15,34 @@
     if (!n.onLine) { // Check if offline.
       return; // Exit from function.
     }
-    try {
-      fetchRestaurantFromURL()
-        .then((restaurant) => {
-          map = new google.maps.Map(d.getElementById('map'), {
-            center: restaurant.latlng,
-            zoom: 16,
-            scrollwheel: false,
-            keyboardShortcuts: false // Disable Google Maps keyboard UI.
-          });
-          DBHelper.mapMarkerForRestaurant(restaurant, map);
-          initMapAccessibility();
-          const listenerTiles = map.addListener('tilesloaded', () => {
-            setTimeout(() => {
-              /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
-              /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
-              d.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
-            }, 150);
-            // Remove event listener.
-            google.maps.event.removeListener(listenerTiles);
-          });
-          fillBreadcrumb(restaurant);
-        })
-        .catch((error) => {
-          console.log(error);
+    fetchRestaurantFromURL()
+      .then((restaurant) => {
+        if (!restaurant) {
+          fillError404HTML();
+          return; // Exit from function.
+        }
+        map = new google.maps.Map(d.getElementById('map'), {
+          center: restaurant.latlng,
+          zoom: 16,
+          scrollwheel: false,
+          keyboardShortcuts: false // Disable Google Maps keyboard UI.
         });
-      } catch(error) {
+        DBHelper.mapMarkerForRestaurant(restaurant, map);
+        initMapAccessibility();
+        const listenerTiles = map.addListener('tilesloaded', () => {
+          setTimeout(() => {
+            /* Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute */
+            /* However, many sources say that <iframe> elements in the document must have a title that is not empty to describe their contents to screen reader users. https://dequeuniversity.com/rules/axe/2.2/frame-title */
+            d.querySelector('#map iframe').title = `Map shows ${restaurant.name} location`;
+          }, 150);
+          // Remove event listener.
+          google.maps.event.removeListener(listenerTiles);
+        });
+        fillBreadcrumb(restaurant);
+      })
+      .catch((error) => {
         console.log(error);
-      }
+      });
   };
 
   /**
@@ -51,7 +51,6 @@
   if (!n.onLine) { // Check if offline.
     d.addEventListener('DOMContentLoaded', () => {
       initPage();
-      fillMapOfflineAlert();
     });
   }
 
@@ -61,11 +60,48 @@
   function initPage() {
     fetchRestaurantFromURL()
       .then((restaurant) => {
+        if (!restaurant) {
+          fillError404HTML();
+          return; // Exit from function.
+        }
         fillBreadcrumb(restaurant);
+        fillMapOfflineAlert();
       })
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  function fillError404HTML() {
+    // Prepare restaurant.html to receive new html codes.
+    d.querySelector('title').innerHTML = 'Page Not Found - Restaurant Reviews';
+    d.body.removeChild(d.querySelector('nav[aria-label="Breadcrumb"]'));
+    const main = d.querySelector('main');
+    main.innerHTML = '';
+    d.body.className = 'error-page';
+    d.body.querySelector('a.skip-link').href = '#main-content';
+    main.removeAttribute('class');
+
+    // Create new elements to build a 404 page.
+    const div = d.createElement('div');
+    const header = d.createElement('header');
+    const h1 = d.createElement('h1');
+    h1.innerHTML = 'Error 404';
+    const p = d.createElement('p');
+    p.innerHTML = 'Sorry, but the page you were trying to view does not exist.';
+    header.append(h1);
+    header.append(p);
+
+    const aContainer = d.createElement('p');
+    const a = d.createElement('a');
+    a.href = '/';
+    a.className = 'button';
+    a.innerHTML = 'Go to our home page';
+    aContainer.append(a);
+
+    div.append(header);
+    div.append(aContainer);
+    main.append(div);
   }
 
   /**
@@ -84,23 +120,20 @@
    * Get current restaurant from page URL with proper error handling.
    */
   function fetchRestaurantFromURL() {
-    try {
-      const id = getParameterByName('id');
-      if (!id) { // No id found in URL.
-        throw Error('No restaurant id in URL');
-      } else {
-        return DBHelper.fetchRestaurantById(id)
-          .then((restaurant) => {
-            fillRestaurantHTML(restaurant);
-            return restaurant;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    } catch(error) {
-      console.log(error);
+    const id = getParameterByName('id');
+    if (!id) {
+      return; // No id found in URL.
     }
+    return DBHelper.fetchRestaurantById(id)
+      .then((restaurant) => {
+        if (restaurant) {
+          fillRestaurantHTML(restaurant);
+          return restaurant;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   /**

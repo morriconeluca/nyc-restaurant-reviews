@@ -184,12 +184,24 @@ class DBHelper {
  */
 ((d, n) => {
   'use strict';
-  // Check if Service Worker is supported.
-  if (!n.serviceWorker) {
-    console.log('Service Worker not supported');
-    return; // Exit from function.
-  }
   d.addEventListener('DOMContentLoaded', () => {
+    const loadingLayer = d.getElementById('loading-layer');
+    if (loadingLayer) {
+      d.addEventListener('readystatechange', function loading() {
+        if (d.readyState === 'complete') {
+          loadingLayer.classList.add('loaded');
+          setTimeout(() => {
+            d.body.removeChild(loadingLayer);
+          }, 400);
+          d.removeEventListener('readystatechange', loading);
+        }
+      } );
+    }
+    // Check if Service Worker is supported.
+    if (!n.serviceWorker) {
+      console.log('Service Worker not supported');
+      return; // Exit from function.
+    }
     n.serviceWorker.register('/sw.js')
       .then((reg) => {
         // Exit if the current page wasn't loaded via a SW.
@@ -263,7 +275,7 @@ class DBHelper {
               if (!sessionStorage.dismissed) hideAlert(div);
             },5000);
           },300);
-        },150);
+        },1000);
         /* When refresh button is clicked, the client sends a message to the new SW that is waiting. */
         refresh.addEventListener('click', () => {
           worker.postMessage({action: 'refresh'});
