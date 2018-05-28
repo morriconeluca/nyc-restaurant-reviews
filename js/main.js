@@ -48,8 +48,8 @@
   function fillMapOfflineAlert() {
     const mapDOMElement = d.getElementById('map');
     const mapOfflineAlert = d.createElement('p');
-    mapOfflineAlert.setAttribute('role', 'alert');
     mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
+    mapDOMElement.setAttribute('role', 'alert');
     mapDOMElement.classList.add('offline');
     mapDOMElement.append(mapOfflineAlert);
   }
@@ -134,13 +134,11 @@
       mapLabel.innerHTML = 'Google Maps Widget: shows restaurants location';
       mapContainer.insertAdjacentElement('afterbegin', mapLabel);
 
-      // Add role to map element.
-      const mapDOMElement = d.getElementById('map');
-      mapDOMElement.setAttribute('role', 'application');
-
       // Add aria-lebelledBy to the div focusable with tab.
       const div = d.querySelector('#map div[tabindex="0"]');
       div.setAttribute('aria-labelledby', 'map-label');
+
+      const mapDOMElement = d.getElementById('map');
 
       // Highlight when map DOM element is onfocus.
       div.addEventListener('focus', () => {

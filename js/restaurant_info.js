@@ -75,15 +75,16 @@
   function fillError404HTML() {
     // Prepare restaurant.html to receive new html codes.
     d.querySelector('title').innerHTML = 'Page Not Found - Restaurant Reviews';
+    d.body.removeChild(d.querySelector('a.skip-link'));
     d.body.removeChild(d.querySelector('nav[aria-label="Breadcrumb"]'));
     const main = d.querySelector('main');
     main.innerHTML = '';
     d.body.className = 'error-page';
-    d.body.querySelector('a.skip-link').href = '#main-content';
     main.removeAttribute('class');
 
     // Create new elements to build a 404 page.
     const div = d.createElement('div');
+    div.setAttribute('role', 'alert');
     const header = d.createElement('header');
     const h1 = d.createElement('h1');
     h1.innerHTML = 'Error 404';
@@ -110,9 +111,9 @@
   function fillMapOfflineAlert() {
     const mapDOMElement = d.getElementById('map');
     const mapOfflineAlert = d.createElement('p');
-    mapOfflineAlert.setAttribute('role', 'alert');
     mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
     mapDOMElement.classList.add('offline');
+    mapDOMElement.setAttribute('role', 'alert');
     mapDOMElement.append(mapOfflineAlert);
   }
 
@@ -298,13 +299,11 @@
       mapLabel.innerHTML = 'Google Maps Widget: shows the restaurant location';
       mapContainer.insertAdjacentElement('afterbegin', mapLabel);
 
-      // Add role to map element.
-      const mapDOMElement = d.getElementById('map');
-      mapDOMElement.setAttribute('role', 'application');
-
       // Add aria-lebelledBy to the div focusable with tab.
       const div = d.querySelector('#map div[tabindex="0"]');
       div.setAttribute('aria-labelledby', 'map-label');
+
+      const mapDOMElement = d.getElementById('map');
 
       // Highlight when map DOM element is onfocus.
       div.addEventListener('focus', () => {
