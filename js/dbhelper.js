@@ -16,19 +16,79 @@ class DBHelper {
    * Fetch all restaurants with proper error handling.
    */
   static fetchRestaurants() {
-    return fetch(DBHelper.DATABASE_URL)
-      .then(response => {
-        if (!response.ok) {
-          throw Error(`Request failed. Returned status of ${response.statusText}`);
-        }
-        return response.json();
-      })
-      .then(restaurants => {
-        return restaurants;
-      })
-      .catch(error => {
-        console.log(error);
+    // Check if indexedDB is supported.
+    if (window.indexedDB) {
+      // Open a connection with indexedDB.
+      const request = window.indexedDB.open('nyc_rr_data');
+
+      // The fetchRestaurants function must return a Promise.
+      return new Promise((resolve, reject) => {
+
+        request.onsuccess = event => {
+          const db = event.target.result;
+          // Open a transaction and obtain a reference to the object store.
+          const store = db.transaction(['restaurants'], 'readwrite').objectStore('restaurants');
+
+          resolve(new Promise((resolve, reject) => {
+            // Use cursors to retrieve all objects in the object store and add them to an array.
+            let IDBRestaurants = [];
+            store.openCursor().onsuccess = event => {
+              let cursor = event.target.result;
+              // Check if the object store is empty.
+              if (!cursor && !IDBRestaurants.length) {
+                // Fetch from the network.
+                resolve(fetch(DBHelper.DATABASE_URL)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw Error(`Request failed. Returned status of ${response.statusText}`);
+                    }
+                    return response.json();
+                  })
+                  .then(restaurants => {
+                    // Open a transaction.
+                    const store = db.transaction(['restaurants'], 'readwrite').objectStore('restaurants');
+                    // Save data into the object store.
+                    restaurants.forEach(restaurant => {
+                      store.add(restaurant);
+                    });
+                    return restaurants;
+                  })
+                  .catch(error => {
+                    console.log(error);
+                  }));
+              } else if (cursor) { // Check the cursor.
+                // Save cursor value in an array.
+                IDBRestaurants.push(cursor.value);
+                cursor.continue();
+              } else {
+                // Return all data from indexedDB.
+                resolve(IDBRestaurants);
+              }
+            };
+            store.openCursor().onerror = event => {
+              reject(event.target.errorCode);
+            };
+          }));
+        };
+        request.onerror = event => {
+          reject(event.target.errorCode);
+        };
       });
+    } else { // If indexedDB is not supported.
+      return fetch(DBHelper.DATABASE_URL)
+        .then(response => {
+          if (!response.ok) {
+            throw Error(`Request failed. Returned status of ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(restaurants => {
+          return restaurants;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }
 
   /**
