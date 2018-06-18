@@ -12,7 +12,7 @@ gulp.task( 'optimize-bitmaps', () => {
 } );
 
 function optimizeBitmaps(width, quality) {
-  return gulp.src( 'img_src/*.{gif,jpeg,jpg,png}' )
+  return gulp.src( 'src/img/*.{gif,jpeg,jpg,png}' )
     .pipe( imageResize( {
       width,
       imageMagick: true,
@@ -27,16 +27,16 @@ function optimizeBitmaps(width, quality) {
     .pipe( rename( ( path ) => {
       path.basename += `-${width}w`;
     } ) )
-    .pipe( gulp.dest( './img' )
+    .pipe( gulp.dest( 'dist/img' )
   );
 }
 
 gulp.task( 'clean', () => {
-  return del( [ './img' ] );
+  return del( [ 'dist/img' ] );
 } );
 
 gulp.task( 'optimize-svgs', () => {
-  return gulp.src( 'img_src/*.svg' )
+  return gulp.src( 'src/img/*.svg' )
     .pipe( imagemin( [
       imagemin.svgo( {
         plugins: [
@@ -45,7 +45,7 @@ gulp.task( 'optimize-svgs', () => {
         ]
       })
     ] ) )
-    .pipe( gulp.dest( './img' ) );
+    .pipe( gulp.dest( 'dist/img' ) );
 } );
 
 gulp.task( 'default', gulp.series(
