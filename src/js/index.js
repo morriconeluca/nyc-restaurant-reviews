@@ -1,5 +1,6 @@
+'use strict';
+
 ((w, d, n) => {
-  'use strict';
 
   if (!w.fetch) {
     console.log('Fetch API not supported');
@@ -32,7 +33,7 @@
   /**
    * Fetch neighborhoods and cuisines as soon as the page is loaded.
    */
-  d.addEventListener('DOMContentLoaded', () => {
+  onReady(() => {
     addSelectListener();
     fetchNeighborhoods();
     fetchCuisines();
@@ -41,6 +42,16 @@
       updateRestaurants();
     }
   });
+
+  /**
+   * Catch DOMContentLoaded event even the script is loading asynchronously.
+   */
+  function onReady(callback) {
+    d.readyState !== 'loading' ? callback() : d.addEventListener('DOMContentLoaded', function ifDOMLoaded() {
+      callback();
+      d.removeEventListener('DOMContentLoaded', ifDOMLoaded);
+    });
+  }
 
   /**
    * Set map offline alert.

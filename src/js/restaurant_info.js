@@ -1,5 +1,6 @@
+'use strict';
+
 ((w, d, n) => {
-  'use strict';
 
   if (!w.fetch) {
     console.log('Fetch API not supported');
@@ -49,8 +50,16 @@
    * Fetch the page content when offline, as soon as the page is loaded.
    */
   if (!n.onLine) { // Check if offline.
-    d.addEventListener('DOMContentLoaded', () => {
-      initPage();
+    onReady(initPage);
+  }
+
+  /**
+   * Catch DOMContentLoaded event even the script is loading asynchronously.
+   */
+  function onReady(callback) {
+    d.readyState !== 'loading' ? callback() : d.addEventListener('DOMContentLoaded', function ifDOMLoaded() {
+      callback();
+      d.removeEventListener('DOMContentLoaded', ifDOMLoaded);
     });
   }
 

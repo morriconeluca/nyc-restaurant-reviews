@@ -9,8 +9,17 @@
 
   <title>Restaurant Info</title>
 
+
+  <!-- Beginning scripts -->
+  <script async src="js/dbhelper.js"></script>
+  <script async src="js/restaurant_info.js"></script>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA&libraries=places&callback=initMap"></script>
+
   <!-- Main CSS file including normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" href="css/styles.css">
+
+  <script async src="js/main.js"></script>
+  <!-- End scripts -->
 </head>
 
 <body class="inside">
@@ -73,14 +82,6 @@
     <p>Copyright © <script>document.write(new Date().getFullYear());</script> <strong><a href="/">Restaurant Reviews</a></strong>. All Rights Reserved.</p>
   </footer>
   <!-- End footer -->
-
-  <!-- Beginning scripts -->
-  <script src="js/main.js"></script>
-  <script src="js/dbhelper.js"></script>
-  <script src="js/restaurant_info.js"></script>
-  <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA&libraries=places&callback=initMap"></script>
-  <!-- End scripts -->
 </body>
 
 </html>

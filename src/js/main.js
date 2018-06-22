@@ -1,20 +1,40 @@
-((w, d, n) => {
-  'use strict';
-  d.addEventListener('DOMContentLoaded', () => {
+'use strict';
+
+((d, n) => {
+  /**
+   * Catch DOMContentLoaded event even the script is loading asynchronously.
+   */
+  function onReady(callback) {
+    d.readyState !== 'loading' ? callback() : d.addEventListener('DOMContentLoaded', function ifDOMLoaded() {
+      callback();
+      d.removeEventListener('DOMContentLoaded', ifDOMLoaded);
+    });
+  }
+
+  onReady(() => {
     /**
      * Handle the loading layer behavior.
      */
-    const loadingLayer = d.getElementById('loading-layer');
-    if (loadingLayer) {
-      d.addEventListener('readystatechange', function loading() {
+    onComplete(() => {
+      const loadingLayer = d.getElementById('loading-layer');
+      if (loadingLayer) {
+        loadingLayer.classList.add('loaded');
+        setTimeout(() => {
+          d.body.removeChild(loadingLayer);
+        }, 400);
+      }
+    });
+
+    /**
+     * Catch readystatechange complete event even the script is loading asynchronously.
+     */
+    function onComplete(callback) {
+      d.readyState === 'complete' ? callback() : d.addEventListener('readystatechange', function ifComplete() {
         if (d.readyState === 'complete') {
-          loadingLayer.classList.add('loaded');
-          setTimeout(() => {
-            d.body.removeChild(loadingLayer);
-          }, 400);
-          d.removeEventListener('readystatechange', loading);
+          callback();
         }
-      } );
+        d.removeEventListener('readystatechange', ifComplete);
+      });
     }
 
     /**
@@ -149,26 +169,5 @@
           }, 300);
         }
     })();
-
-    /**
-     * IndexedDB.
-     */
-    (() => {
-      // Check if indexedDB is supported.
-      if (!w.indexedDB) {
-        console.log('IndexedDB not supported');
-        return;
-      }
-      // Open a connection with indexedDB and create the object store.
-      const request = w.indexedDB.open('nyc_rr_data', 1);
-      request.onupgradeneeded = event => {
-        const db = event.target.result;
-        db.createObjectStore('restaurants', {keyPath: 'id'});
-      };
-      // Handle error.
-      request.onerror = event => {
-        console.log('Database error: ', event.target.errorCode);
-      };
-    })();
   });
-})(window, document, navigator);
+})(document, navigator);
