@@ -30,8 +30,9 @@
 
   <main id="main-content" role="main">
     <aside id="map-container">
-      <!-- Tha map should have a role of application. This feature is added via javascript to handle different behaviors related to internet connection status. Look at main.js -->
-      <div id="map" role="application"></div>
+      <div id="static-map" tabindex="0" role="button" aria-label="Click to activate the map.">
+        <div id="map" role="application" style="display: none;"></div>
+      </div>
     </aside>
     <!-- For search facilities, authors SHOULD use the search role and not the generic form role. https://www.w3.org/WAI/PF/aria-1.1/roles#form -->
     <section id="filter-options" role="search">

@@ -16,6 +16,7 @@
    */
   w.initMap = () => {
     if(!n.onLine) return;
+    initStaticMap();
     let loc = {
       lat: 40.722216,
       lng: -73.987501
@@ -50,6 +51,58 @@
     d.readyState !== 'loading' ? callback() : d.addEventListener('DOMContentLoaded', function ifDOMLoaded() {
       callback();
       d.removeEventListener('DOMContentLoaded', ifDOMLoaded);
+    });
+  }
+
+  /**
+   * Initialize and make responsive Google maps static API.
+   */
+  function initResponsiveFreeStaticMap() {
+    const staticMap = d.getElementById('static-map');
+    let w = staticMap.clientWidth,
+      h = staticMap.clientHeight;
+    /* The free Google maps static API returns 640x640 maximum image resolution, and 1280x1280 with scale 2. */
+    const scale = w > 640 || h > 640 ? 2 : 1,
+    aspectRatio = w > h ? +(w/h).toFixed(6) : +(h/w).toFixed(6);
+    if (w > h) {
+      w = w > 640 ? 640 : w;
+      h = Math.round(w/aspectRatio);
+    } else {
+      h = h > 640 ? 640 : h;
+      w = Math.round(h/aspectRatio);
+    }
+    staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${w}x${h}&scale=${scale}&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
+  }
+
+  function swapMapListener() {
+    const staticMap = d.getElementById('static-map');
+    staticMap.addEventListener('click', () => {
+      swapMap();
+    });
+
+    staticMap.addEventListener('keydown', (e) => {
+      if (e.keyCode === 13) {
+        swapMap();
+      }
+    });
+
+    function swapMap() {
+      d.getElementById('map').style.display = 'block';
+      staticMap.removeAttribute('tabindex');
+      staticMap.removeAttribute('role');
+      staticMap.removeAttribute('aria-label');
+      setTimeout(() => {
+        d.querySelector('#map div[tabindex="0"]').focus();
+      }, 1000);
+    }
+  }
+
+  function initStaticMap() {
+    swapMapListener();
+    initResponsiveFreeStaticMap();
+    // Reboot Google maps static API on window resize.
+    w.addEventListener('resize', () => {
+      requestAnimationFrame(initResponsiveFreeStaticMap);
     });
   }
 

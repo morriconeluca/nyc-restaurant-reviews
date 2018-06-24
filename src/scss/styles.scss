@@ -449,13 +449,21 @@ body> header h1,
   position: relative;
 }
 
-#map {
+#static-map {
   height: calc(100vh - 4.029412rem);
   width: 100%;
   background-color: #e5e3df; /* Google Map default background */
+  background-size: cover;
+  background-position: bottom;
 }
 
-.inside #map {
+#map {
+  height: 100%;
+  background-size: cover;
+  background-position: bottom;
+}
+
+.inside #static-map {
   height: calc(100vh - 7.764706rem);
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
@@ -877,7 +885,7 @@ abbr[class|="stars"] {
     line-height: 1.5625;
   }
 
-  body:not(.inside) #map {
+  body:not(.inside) #static-map {
     height: calc(100vh - 4.441177rem);
   }
 
@@ -927,7 +935,7 @@ abbr[class|="stars"] {
     top: -4.029411rem;
   }
 
-  .inside #map {
+  .inside #static-map {
     height: calc(100% + 4.029411rem);
   }
 
@@ -978,7 +986,7 @@ abbr[class|="stars"] {
     margin-left: 1rem;
   }
 
-  /* body:not(.inside) #map {
+  /* body:not(.inside) #static-map {
     height: calc(100vh - 4.441177rem - 5.375882rem);
   } */
 }
