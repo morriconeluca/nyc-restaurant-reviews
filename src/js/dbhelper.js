@@ -1,28 +1,5 @@
 'use strict';
 
-((w) => {
-  /**
-   * IndexedDB.
-   */
-  (() => {
-    // Check if indexedDB is supported.
-    if (!w.indexedDB) {
-      console.log('IndexedDB not supported');
-      return;
-    }
-    // Open a connection with indexedDB and create the object store.
-    const request = w.indexedDB.open('nyc_rr_data', 1);
-    request.onupgradeneeded = event => {
-      const db = event.target.result;
-      db.createObjectStore('restaurants', {keyPath: 'id'});
-    };
-    // Handle error.
-    request.onerror = event => {
-      console.log('Database error: ', event.target.errorCode);
-    };
-  })();
-})(window);
-
 /**
  * Common database helper functions.
  */
@@ -44,7 +21,13 @@ class DBHelper {
     // Check if indexedDB is supported.
     if (window.indexedDB) {
       // Open a connection with indexedDB.
-      const request = window.indexedDB.open('nyc_rr_data');
+      const request = window.indexedDB.open('nyc_rr_data', 1);
+
+      // Create the object store.
+      request.onupgradeneeded = event => {
+        const db = event.target.result;
+        db.createObjectStore('restaurants', {keyPath: 'id'});
+      };
 
       // The fetchRestaurants function must return a Promise.
       return new Promise((resolve, reject) => {
