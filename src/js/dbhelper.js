@@ -181,8 +181,7 @@ class DBHelper {
     /* const extension = restaurant.photograph.split('.').pop();
     const name = restaurant.photograph.slice(0, restaurant.photograph.indexOf(`.${extension}`));
     return (`/img/${name}-${width}w.${extension}`); */
-    const name = restaurant.photograph || 'image-placeholder';
-    return `/img/${name}-${width}w.jpg`;
+    return restaurant.photograph ? `/img/${restaurant.photograph}-${width}w.jpg` : '/img/image-placeholder.svg';
   }
 
   /**

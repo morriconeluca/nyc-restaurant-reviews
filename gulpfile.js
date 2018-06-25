@@ -25,6 +25,7 @@ gulp.task('minify-html', () => {
   return gulp.src('src/*.{html,htm}')
     .pipe(htmlmin({
       collapseWhitespace: true,
+      conservativeCollapse: true,
       removeComments: true,
       minifyJS: true
     }))
@@ -102,7 +103,7 @@ gulp.task('copy-css', () => {
 });
 
 gulp.task('copy-img', () => {
-  return gulp.src(['src/img/*.{gif,jpeg,jpg,png}', 'src/*.ico'])
+  return gulp.src('src/img/*.{gif,jpeg,jpg,png,svg}')
     .pipe(gulp.dest('dist/img'));
 });
 

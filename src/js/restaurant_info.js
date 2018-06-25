@@ -26,7 +26,7 @@
         initStaticMap(restaurant.latlng);
         map = new google.maps.Map(d.getElementById('map'), {
           center: restaurant.latlng,
-          zoom: 18,
+          zoom: 17,
           scrollwheel: false,
           keyboardShortcuts: false // Disable Google Maps keyboard UI.
         });
