@@ -4,6 +4,7 @@ const gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   htmlmin = require('gulp-htmlmin'),
   sass = require('gulp-sass'),
+  critical = require('critical').stream,
   imageResize = require('gulp-image-resize'),
   imagemin = require('gulp-imagemin'),
   rename = require('gulp-rename'),
@@ -34,6 +35,17 @@ gulp.task('sass', () => {
   return gulp.src('src/scss/*.scss')
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(gulp.dest('src/css'));
+});
+
+gulp.task('critical', () => {
+  return gulp.src('dist/*.html')
+      .pipe(critical({
+        base: 'dist/',
+        inline: true,
+        minify: true,
+        css: ['dist/css/styles.css']
+      }))
+      .pipe(gulp.dest('dist'));
 });
 
 gulp.task('optimize-bitmaps', () => {
@@ -118,5 +130,6 @@ gulp.task('default', gulp.series(
     'copy-css',
     'copy-img',
     'copy-favicon'
-  )
+  ),
+  'critical'
 ));
