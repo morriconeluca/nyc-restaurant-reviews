@@ -5,6 +5,7 @@ const gulp = require('gulp'),
   htmlmin = require('gulp-htmlmin'),
   sass = require('gulp-sass'),
   critical = require('critical').stream,
+  webp = require('gulp-webp'),
   imageResize = require('gulp-image-resize'),
   imagemin = require('gulp-imagemin'),
   rename = require('gulp-rename'),
@@ -89,6 +90,18 @@ gulp.task('optimize-svgs', () => {
     .pipe(gulp.dest('src/img'));
 });
 
+gulp.task('png-to-webp', () => {
+  return gulp.src('src/img/*.png')
+    .pipe(webp({lossless: true}))
+    .pipe(gulp.dest('src/img'));
+});
+
+gulp.task('jpg-to-webp', () => {
+  return gulp.src('src/img/*.{jpeg,jpg}')
+    .pipe(webp({quality: 65}))
+    .pipe(gulp.dest('src/img'));
+});
+
 gulp.task('clean-src-img', () => {
   return del(['src/img']);
 });
@@ -103,7 +116,7 @@ gulp.task('copy-css', () => {
 });
 
 gulp.task('copy-img', () => {
-  return gulp.src('src/img/*.{gif,jpeg,jpg,png,svg}')
+  return gulp.src('src/img/*.{gif,jpeg,jpg,png,svg,webp}')
     .pipe(gulp.dest('dist/img'));
 });
 
@@ -117,6 +130,10 @@ gulp.task('build-src', gulp.series(
   gulp.parallel(
     'optimize-bitmaps',
     'optimize-svgs'
+  ),
+  gulp.parallel(
+    'png-to-webp',
+    'jpg-to-webp'
   )
 ));
 
