@@ -173,12 +173,12 @@
    * Set map offline alert.
    */
   function fillMapOfflineAlert() {
-    const mapDOMElement = d.getElementById('map');
+    const staticMap = d.getElementById('static-map');
     const mapOfflineAlert = d.createElement('p');
+    mapOfflineAlert.setAttribute('role', 'alert');
     mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
-    mapDOMElement.classList.add('offline');
-    mapDOMElement.setAttribute('role', 'alert');
-    mapDOMElement.append(mapOfflineAlert);
+    staticMap.classList.add('offline');
+    staticMap.append(mapOfflineAlert);
   }
 
   /**

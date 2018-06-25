@@ -482,7 +482,7 @@ body> header h1,
   margin: 0;
 }
 
-#map.offline {
+#static-map.offline {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -496,13 +496,13 @@ body> header h1,
   align-items: center;
 }
 
-#map.offline> * {
+#static-map.offline> * {
   -webkit-box-flex: 0;
   -ms-flex: 0 1 auto;
   flex: 0 1 auto;
 }
 
-#map.offline p {
+#static-map.offline p {
   padding: 1.25em 1rem;
   background-color: #fff;
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
