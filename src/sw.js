@@ -4,6 +4,7 @@
     ORIGIN = 'NYC-RR-',
     STATIC_CACHE = `${ORIGIN}static-cache-v${SW_VERSION}`,
     DYNAMIC_CACHE = `${ORIGIN}dynamic-cache-v${SW_VERSION}`,
+    CORS_DYNAMIC_CACHE = `${ORIGIN}cors-dynamic-cache-v${SW_VERSION}`,
     RESOURCES_TO_CACHE = [
       '/',
       '/index.html',
@@ -110,6 +111,32 @@
             })
         );
       }
+    } else if (event.request.url.startsWith('https://maps.googleapis.com/maps/api/staticmap')) {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          if (response) return response;
+          /* Opening Devtools triggers "only-if-cached" request which cannot be handled by Service Worker. https://bugs.chromium.org/p/chromium/issues/detail?id=823392 */
+          /* This is a workaround: https://github.com/paulirish/caltrainschedule.io/pull/51/commits/82d03d9c4468681421321db571d978d6adea45a7 */
+          if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
+            return; // Skip the request.
+          }
+          return caches.open(CORS_DYNAMIC_CACHE).then((cache) => {
+            return fetch(event.request).then((response) => {
+              cache.put(event.request, response.clone())
+                .catch((error) => {
+                  /* In some cases dynamic caching fails: e.g. it's not possible to cache a resource because a "DOMException: Quota exceeded" error fires. Resources called through the 'chrome-extension' protocol produce annoying errors too. */
+                  if (event.request.mode === 'no-cors' || event.request.url.startsWith('chrome-extension')) {
+                    console.log('[SW] Dynamic caching failed, skipped error', error, event.request.url);
+                    return; // Skip the error.
+                  }
+                  caches.delete(CORS_DYNAMIC_CACHE); // Clear the cache.
+                  console.log('[SW] Dynamic caching failed, error', error, event.request.url, 'The cache is cleared with CORS resources.');
+                });
+              return response;
+            });
+          });
+        })
+      );
     }
   });
 

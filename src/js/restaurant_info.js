@@ -143,7 +143,7 @@
       h = h > 640 ? 640 : h;
       w = Math.round(h/aspectRatio);
     }
-    staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?size=${w}x${h}&scale=${scale}&markers=color:red%7C${latlng.lat},${latlng.lng}&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
+    staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?size=${w}x${h}&scale=${scale}&markers=color:red%7C${latlng.lat},${latlng.lng}&format=jpg&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
   }
 
   function swapMapListener() {

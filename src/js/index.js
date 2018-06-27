@@ -71,7 +71,7 @@
       h = h > 640 ? 640 : h;
       w = Math.round(h/aspectRatio);
     }
-    staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${w}x${h}&scale=${scale}&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
+    staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${w}x${h}&scale=${scale}&format=jpg&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
   }
 
   function swapMapListener() {
