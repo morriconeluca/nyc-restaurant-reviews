@@ -574,7 +574,7 @@ body> header h1,
   text-transform: uppercase;
 }
 
-#restaurants-list article> :not(img) {
+#restaurants-list article> :not(picture):not(img) {
   padding: 0 1rem;
 }
 
@@ -604,7 +604,7 @@ body> header h1,
   box-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
 }
 
-#restaurant-container> div> :not(img):not(figure),
+#restaurant-container> div> :not(picture):not(img):not(figure),
 #restaurant-container> div> figure caption {
   padding: 0 1rem;
 }
