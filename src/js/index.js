@@ -293,12 +293,12 @@
     const article = d.createElement('article');
 
     const image = d.createElement('img');
+    image.src = '/img/image-placeholder.svg';
     image.className = 'restaurant-img';
     /* Adding alternative text for images is the first principle of web accessibility. [...] Every image must have an alt attribute. This is a requirement of HTML standard (with perhaps a few exceptions in HTML5). Images without an alt attribute are likely inaccessible. In some cases, images may be given an empty or null alt attribute (e.g., alt=""). https://webaim.org/techniques/alttext/ */
     image.alt = restaurant.photoDescription || `The ${restaurant.cuisine_type} Restaurant ${restaurant.name}`;
 
     if (!restaurant.photograph) {
-      image.src = '/img/image-placeholder.svg';
       article.append(image);
     } else {
       const picture = d.createElement('picture');
@@ -308,12 +308,17 @@
       webpSource.sizes = jpgSource.sizes;
       jpgSource.srcset = DBHelper.formatSrcset(restaurant);
       webpSource.srcset = jpgSource.srcset.replace(/w.jpg/g, 'w.webp');
-      image.src = DBHelper.imageUrlForRestaurant(restaurant, 800);
 
       picture.append(image);
-      image.insertAdjacentElement('beforebegin', webpSource);
-      image.insertAdjacentElement('beforebegin', jpgSource);
       article.append(picture);
+
+      // Simple lazy loading implementation on scroll.
+      w.addEventListener('scroll', function lazyLoad() {
+        image.insertAdjacentElement('beforebegin', webpSource);
+        image.insertAdjacentElement('beforebegin', jpgSource);
+        image.src = DBHelper.imageUrlForRestaurant(restaurant, 800);
+        w.removeEventListener('scroll', lazyLoad);
+      });
     }
 
     const name = d.createElement('h3');
