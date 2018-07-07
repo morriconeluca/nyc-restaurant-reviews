@@ -17,7 +17,7 @@ gulp.task('minify-js', () => {
     .pipe(babel({
       presets: ['env']
     }))
-    .pipe(uglify({ mangle: {reserved: ['initMap']} }))
+    .pipe(uglify({ mangle: {reserved: ['initMap', 'ClientError']} }))
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('./dist'));
 });

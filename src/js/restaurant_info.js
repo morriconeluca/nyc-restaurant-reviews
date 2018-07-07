@@ -13,17 +13,8 @@
    * Initialize Google map, called from HTML with proper error handling.
    */
   w.initMap = () => {
-    if (!n.onLine) { // Check if offline.
-      return; // Exit from function.
-    }
     fetchRestaurantFromURL()
       .then(restaurant => {
-        if (!restaurant) {
-          fillError404HTML();
-          return; // Exit from function.
-        }
-        fillBreadcrumb(restaurant);
-        initStaticMap(restaurant.latlng);
         map = new google.maps.Map(d.getElementById('map'), {
           center: restaurant.latlng,
           zoom: 17,
@@ -48,13 +39,6 @@
   };
 
   /**
-   * Fetch the page content when offline, as soon as the page is loaded.
-   */
-  if (!n.onLine) { // Check if offline.
-    onReady(initPage);
-  }
-
-  /**
    * Catch DOMContentLoaded event even the script is loading asynchronously.
    */
   function onReady(callback) {
@@ -67,20 +51,22 @@
   /**
    * Initialize the page whithout initialize Google Maps.
    */
-  function initPage() {
+  onReady(() => {
     fetchRestaurantFromURL()
       .then(restaurant => {
+        fillRestaurantHTML(restaurant);
         if (!restaurant) {
           fillError404HTML();
           return; // Exit from function.
         }
         fillBreadcrumb(restaurant);
-        fillMapOfflineAlert();
+        initStaticMap(restaurant.latlng);
+        if (!n.onLine) fillMapOfflineAlert();
       })
       .catch(error => {
         console.log(error);
       });
-  }
+  });
 
   function fillError404HTML() {
     // Prepare restaurant.html to receive new html codes.
@@ -100,23 +86,23 @@
     h1.innerHTML = 'Error 404';
     const p = d.createElement('p');
     p.innerHTML = 'Sorry, but the page you were trying to view does not exist.';
-    header.append(h1);
-    header.append(p);
+    header.appendChild(h1);
+    header.appendChild(p);
 
     const aContainer = d.createElement('p');
     const a = d.createElement('a');
     a.href = '/';
     a.className = 'button';
     a.innerHTML = 'Go to our home page';
-    aContainer.append(a);
+    aContainer.appendChild(a);
 
-    div.append(header);
-    div.append(aContainer);
-    main.append(div);
+    div.appendChild(header);
+    div.appendChild(aContainer);
+    main.appendChild(div);
   }
 
   function initStaticMap(latlng) {
-    swapMapListener();
+    if (n.onLine) swapMapListener();
     initResponsiveFreeStaticMap(latlng);
     // Reboot Google maps static API on window resize.
     w.addEventListener('resize', () => {
@@ -148,15 +134,34 @@
 
   function swapMapListener() {
     const staticMap = d.getElementById('static-map');
-    staticMap.addEventListener('click', () => {
-      swapMap();
-    });
-
-    staticMap.addEventListener('keydown', (e) => {
-      if (e.keyCode === 13) {
+    staticMap.addEventListener('click', function fun() {
+      if (!n.onLine) { // Check if offline.
+        fillMapOfflineAlert();
+      } else {
+        loadMap();
         swapMap();
       }
+      staticMap.removeEventListener('click', fun);
     });
+
+    staticMap.addEventListener('keydown', function fun(e) {
+      if (e.keyCode === 13) {
+        if (!n.onLine) { // Check if offline.
+          fillMapOfflineAlert();
+        } else {
+          loadMap();
+          swapMap();
+        }
+        staticMap.removeEventListener('keydown', fun);
+      }
+    });
+
+    function loadMap() {
+      const script = d.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA&libraries=places&callback=initMap';
+      script.setAttribute('async', '');
+      d.getElementsByTagName('head')[0].appendChild(script);
+    }
 
     function swapMap() {
       d.getElementById('map').style.display = 'block';
@@ -178,7 +183,7 @@
     mapOfflineAlert.setAttribute('role', 'alert');
     mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
     staticMap.classList.add('offline');
-    staticMap.append(mapOfflineAlert);
+    staticMap.appendChild(mapOfflineAlert);
   }
 
   /**
@@ -192,7 +197,6 @@
     return DBHelper.fetchRestaurantById(id)
       .then(restaurant => {
         if (restaurant) {
-          fillRestaurantHTML(restaurant);
           return restaurant;
         }
       })
@@ -240,7 +244,7 @@
       jpgSource.srcset = DBHelper.formatSrcset(restaurant);
       webpSource.srcset = jpgSource.srcset.replace(/w.jpg/g, 'w.webp');
 
-      picture.append(image);
+      picture.appendChild(image);
       name.insertAdjacentElement('beforebegin', picture);
 
       // Simple lazy loading implementation on scroll.

@@ -16,7 +16,6 @@
    */
   w.initMap = () => {
     if(!n.onLine) return;
-    initStaticMap();
     let loc = {
       lat: 40.722216,
       lng: -73.987501
@@ -35,12 +34,13 @@
    * Fetch neighborhoods and cuisines as soon as the page is loaded.
    */
   onReady(() => {
+    initStaticMap();
     addSelectListener();
     fetchNeighborhoods();
     fetchCuisines();
+    updateRestaurants();
     if (!n.onLine) { // Check if offline.
       fillMapOfflineAlert();
-      updateRestaurants();
     }
   });
 
@@ -76,15 +76,26 @@
 
   function swapMapListener() {
     const staticMap = d.getElementById('static-map');
-    staticMap.addEventListener('click', () => {
+    staticMap.addEventListener('click', function fun() {
+      loadMap();
       swapMap();
+      staticMap.removeEventListener('click', fun);
     });
 
-    staticMap.addEventListener('keydown', (e) => {
+    staticMap.addEventListener('keydown', function fun(e) {
       if (e.keyCode === 13) {
+        loadMap();
         swapMap();
+        staticMap.removeEventListener('keydown', fun);
       }
     });
+
+    function loadMap() {
+      const script = d.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA&libraries=places&callback=initMap';
+      script.setAttribute('async', '');
+      d.getElementsByTagName('head')[0].appendChild(script);
+    }
 
     function swapMap() {
       d.getElementById('map').style.display = 'block';
@@ -115,7 +126,7 @@
     mapOfflineAlert.setAttribute('role', 'alert');
     mapOfflineAlert.innerHTML = '⚠ You are offline, map is not available.';
     staticMap.classList.add('offline');
-    staticMap.append(mapOfflineAlert);
+    staticMap.appendChild(mapOfflineAlert);
   }
 
   /**
@@ -148,7 +159,7 @@
       const option = d.createElement('option');
       option.innerHTML = neighborhood;
       option.value = neighborhood;
-      select.append(option);
+      select.appendChild(option);
     });
   }
 
@@ -172,7 +183,7 @@
       const option = d.createElement('option');
       option.innerHTML = cuisine;
       option.value = cuisine;
-      select.append(option);
+      select.appendChild(option);
     });
   }
 
@@ -277,7 +288,7 @@
     } else {
       const ul = d.getElementById('restaurants-list');
       restaurants.forEach(restaurant => {
-        ul.append(createRestaurantHTML(restaurant));
+        ul.appendChild(createRestaurantHTML(restaurant));
       });
       let s = (restaurants.length > 1) ? 's' : '';
       notice.innerHTML = `${restaurants.length} restaurant${s} found`;
@@ -299,7 +310,7 @@
     image.alt = restaurant.photoDescription || `The ${restaurant.cuisine_type} Restaurant ${restaurant.name}`;
 
     if (!restaurant.photograph) {
-      article.append(image);
+      article.appendChild(image);
     } else {
       const picture = d.createElement('picture');
       const jpgSource = d.createElement('source');
@@ -309,8 +320,8 @@
       jpgSource.srcset = DBHelper.formatSrcset(restaurant);
       webpSource.srcset = jpgSource.srcset.replace(/w.jpg/g, 'w.webp');
 
-      picture.append(image);
-      article.append(picture);
+      picture.appendChild(image);
+      article.appendChild(picture);
 
       // Simple lazy loading implementation on scroll.
       w.addEventListener('scroll', function lazyLoad() {
@@ -323,19 +334,19 @@
 
     const name = d.createElement('h3');
     name.innerHTML = restaurant.name;
-    article.append(name);
+    article.appendChild(name);
 
     const neighborhood = d.createElement('p');
     const strong = d.createElement('strong');
     strong.innerHTML = `${restaurant.neighborhood}`;
-    neighborhood.append(strong);
-    article.append(neighborhood);
+    neighborhood.appendChild(strong);
+    article.appendChild(neighborhood);
 
     const address = d.createElement('address');
     const addressContent = d.createElement('p');
     addressContent.innerHTML = restaurant.address;
-    address.append(addressContent);
-    article.append(address);
+    address.appendChild(addressContent);
+    article.appendChild(address);
 
     const more = d.createElement('p');
     const button = d.createElement('a');
@@ -346,10 +357,10 @@
     /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
     /*  One alternative option could be using aria-labelledby, but in this case it's better using the aria-label attribute instead of title. N.B. The aria-label overrides the link text. */
     button.setAttribute('aria-label', `View Details about ${restaurant.name}`);
-    more.append(button);
-    article.append(more);
+    more.appendChild(button);
+    article.appendChild(more);
 
-    li.append(article);
+    li.appendChild(article);
     return li;
   }
 
