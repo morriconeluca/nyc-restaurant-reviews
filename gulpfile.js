@@ -77,6 +77,15 @@ function optimizeBitmaps(width, quality) {
   );
 }
 
+gulp.task('optimize-icons', () => {
+  return gulp.src('src/img_src/icons/*.png')
+    .pipe(imagemin([
+      imagemin.optipng({optimizationLevel: 5})
+    ]))
+    .pipe(gulp.dest('src/img/icons')
+  );
+});
+
 gulp.task('optimize-svgs', () => {
   return gulp.src('src/img_src/*.svg')
     .pipe(imagemin([
@@ -116,12 +125,17 @@ gulp.task('copy-css', () => {
 });
 
 gulp.task('copy-img', () => {
-  return gulp.src('src/img/*.{gif,jpeg,jpg,png,svg,webp}')
+  return gulp.src('src/img/**/*.{gif,jpeg,jpg,png,svg,webp}')
     .pipe(gulp.dest('dist/img'));
 });
 
 gulp.task('copy-favicon', () => {
-  return gulp.src('src/*.ico')
+  return gulp.src('src/favicon.ico')
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('copy-manifest', () => {
+  return gulp.src('src/manifest.json')
     .pipe(gulp.dest('./dist'));
 });
 
@@ -129,6 +143,7 @@ gulp.task('build-src', gulp.series(
   'clean-src-img',
   gulp.parallel(
     'optimize-bitmaps',
+    'optimize-icons',
     'optimize-svgs'
   ),
   gulp.parallel(
@@ -147,7 +162,8 @@ gulp.task('default', gulp.series(
     'minify-html',
     'copy-css',
     'copy-img',
-    'copy-favicon'
+    'copy-favicon',
+    'copy-manifest'
   ),
   'critical'
 ));

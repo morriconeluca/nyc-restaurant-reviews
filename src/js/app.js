@@ -55,7 +55,7 @@ function onReady(callback) {
  */
 fetchRestaurants()
   .then(restaurants => {
-    if (w.location.pathname === '/') { // === HOME - index.html ===
+    if (w.location.pathname === '/' || w.location.pathname === '/index.html') { // === HOME - index.html ===
       (() => {
         // Some useful variables declarations or initializations.
         let markers = [],
