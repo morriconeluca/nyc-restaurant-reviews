@@ -623,6 +623,7 @@ body> header h1,
 }
 
 #reviews-container> p {
+  text-align: center;
   padding: 0 0.5rem;
 }
 
@@ -883,6 +884,10 @@ abbr[class|="stars"] {
 
   #restaurant-container {
     order: -1;
+  }
+
+  #reviews-container {
+    width: 100%;
   }
 
   .inside #map-container,

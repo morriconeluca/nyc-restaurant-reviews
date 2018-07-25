@@ -78,13 +78,64 @@ function optimizeBitmaps(width, quality) {
 }
 
 gulp.task('optimize-icons', () => {
-  return gulp.src('src/img_src/icons/*.png')
+  const iconsWidth = [192, 512];
+  const msTilesWidth = [70, 150, 310];
+
+  iconsWidth.forEach(width => {
+    optimizeIcons({
+      basename: 'icon',
+      width,
+      suffix: true
+    });
+  });
+
+  optimizeIcons({
+    basename: 'favicon',
+    width: 96
+  });
+
+  optimizeIcons({
+    basename: 'apple-touch-icon',
+    width: 180
+  });
+
+  msTilesWidth.forEach(width => {
+    optimizeIcons({
+      basename: 'mstile',
+      width,
+      suffix: true
+    });
+  });
+
+  return optimizeIcons({
+    basename: 'mstile',
+    width: 310,
+    height: 150,
+    suffix: true,
+    crop: true
+  });
+});
+
+function optimizeIcons({basename, width, height, suffix, crop}) {
+  return gulp.src('src/img_src/icons/icon.png')
+    .pipe(imageResize({
+      width,
+      height: height || width,
+      imageMagick: true,
+      filter: 'Catrom',
+      quality: 0.3,
+      crop: crop || false
+    }))
     .pipe(imagemin([
       imagemin.optipng({optimizationLevel: 5})
     ]))
+    .pipe(rename(path => {
+      path.basename = basename;
+      path.basename += suffix ? `-${width}x${(height || width)}` : '';
+    }))
     .pipe(gulp.dest('src/img/icons')
   );
-});
+}
 
 gulp.task('optimize-svgs', () => {
   return gulp.src('src/img_src/*.svg')
@@ -97,6 +148,11 @@ gulp.task('optimize-svgs', () => {
       })
     ]))
     .pipe(gulp.dest('src/img'));
+});
+
+gulp.task('copy-favicon', () => {
+  return gulp.src('src/img_src/icons/favicon.ico')
+    .pipe(gulp.dest('src/img/icons'));
 });
 
 gulp.task('png-to-webp', () => {
@@ -125,17 +181,17 @@ gulp.task('copy-css', () => {
 });
 
 gulp.task('copy-img', () => {
-  return gulp.src('src/img/**/*.{gif,jpeg,jpg,png,svg,webp}')
+  return gulp.src('src/img/**/*.{gif,ico,jpeg,jpg,png,svg,webp}')
     .pipe(gulp.dest('dist/img'));
-});
-
-gulp.task('copy-favicon', () => {
-  return gulp.src('src/favicon.ico')
-    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('copy-manifest', () => {
   return gulp.src('src/manifest.json')
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('copy-browserconfig', () => {
+  return gulp.src('src/browserconfig.xml')
     .pipe(gulp.dest('./dist'));
 });
 
@@ -144,7 +200,8 @@ gulp.task('build-src', gulp.series(
   gulp.parallel(
     'optimize-bitmaps',
     'optimize-icons',
-    'optimize-svgs'
+    'optimize-svgs',
+    'copy-favicon'
   ),
   gulp.parallel(
     'png-to-webp',
@@ -162,8 +219,8 @@ gulp.task('default', gulp.series(
     'minify-html',
     'copy-css',
     'copy-img',
-    'copy-favicon',
-    'copy-manifest'
+    'copy-manifest',
+    'copy-browserconfig'
   ),
   'critical'
 ));

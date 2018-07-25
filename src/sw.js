@@ -14,9 +14,8 @@ const SW_VERSION = 1,
     '/img/image-fallback.svg',
     '/js/intersection-observer.js',
     '/404.html',
-    '/offline.html',
-    /* Unfortunally Service Worker 'fetch' event does not trigger for favicons in Chrome. This bug is still open. https://bugs.chromium.org/p/chromium/issues/detail?id=448427 */
-    '/favicon.ico'
+    '/offline.html'
+    /* Unfortunally Service Worker 'fetch' event does not trigger for favicon in Chrome. This bug is still open. https://bugs.chromium.org/p/chromium/issues/detail?id=448427 */
 ];
 
 /**
