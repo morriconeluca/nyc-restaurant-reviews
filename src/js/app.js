@@ -34,7 +34,9 @@ class ClientError {
 }
 
 const port = 1337,
-DATABASE_URL = `http://localhost:${port}/restaurants`;
+      RESTAURANTS_URL = `http://localhost:${port}/restaurants`,
+      RESTAURANT_REVIEWS_URL = `http://localhost:${port}/reviews/?restaurant_id=`;
+
 
 let staticMap,
     map,
@@ -52,8 +54,7 @@ function onReady(callback) {
 
 /**
  * MAIN PROCESS.
- */
-fetchRestaurants()
+ */ fetchItems('restaurants', RESTAURANTS_URL)
   .then(restaurants => {
     if (w.location.pathname === '/' || w.location.pathname === '/index.html') { // === HOME - index.html ===
       (() => {
@@ -75,10 +76,10 @@ fetchRestaurants()
               setStaticMap(getResponsiveStaticMapParameters());
             });
             addListenerToStaticMap();
-            addSelectListener();
           } else { // Offline.
             showOfflineAlert();
           }
+          addSelectListener();
           addRestaurantsHTML(restaurants);
           lazyLoad();
         });
@@ -386,8 +387,14 @@ fetchRestaurants()
             fillRestaurantHoursHTML(restaurant.operating_hours);
           }
 
-          // Fill restorant reviews.
-          fillRestaurantReviewsHTML(restaurant.reviews);
+          fetchItems('reviews', RESTAURANT_REVIEWS_URL + restaurant.id, restaurant.id)
+            .then(reviews => {
+              // Fill restaurant reviews.
+              fillRestaurantReviewsHTML(reviews);
+            })
+            .catch(error => {
+              console.log(error);
+            });
         }
 
         /**
@@ -424,7 +431,7 @@ fetchRestaurants()
 
           if (!reviews) {
             const noReviews = d.cE('p');
-            noReviews.innerHTML = 'No reviews yet!';
+            noReviews.innerHTML = n.online ? 'No reviews yet!' : 'Sorry, reviews for this restaurant are not available offline.';
             container.appendChild(noReviews);
             return;
           }
@@ -448,12 +455,18 @@ fetchRestaurants()
                 date = d.cE('time'),
                 ratingContainer = d.cE('p'),
                 rating = d.cE('abbr'),
-                comments = d.cE('p');
+                comments = d.cE('p'),
+                theDate = new Date(review.updatedAt),
+                options = {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                };
 
           name.innerHTML = review.name;
 
-          date.dateTime = formatDatetime(review.date);
-          date.innerHTML = review.date;
+          date.dateTime = theDate.toISOString();
+          date.innerHTML = theDate.toLocaleDateString('en-US', options);
 
           heading.append(name, date);
 
@@ -475,22 +488,6 @@ fetchRestaurants()
 
           return li;
         }
-
-        /**
-         * Get a representation of date string in a machine-readable format.
-         */
-        function formatDatetime(date) {
-          const d = new Date(date),
-              year = d.getFullYear();
-
-          let month = (d.getMonth() + 1) + '',
-              day = d.getDate() + '';
-
-          if (month.length < 2) month = '0' + month;
-          if (day.length < 2) day = '0' + day;
-
-          return [year, month, day].join('-');
-        }
       })();
     }
   })
@@ -501,92 +498,99 @@ fetchRestaurants()
 // === DATABASE HELPER FUNCTIONS ===
 
 /**
- * Fetch all restaurants with proper error handling.
+ * Fetch all restaurants or reviews with proper error handling.
  */
-function fetchRestaurants() {
+function fetchItems(itemsString, url, restaurantId) {
   // Check if indexedDB is supported.
   if (w.indexedDB) {
     // Open a connection with indexedDB.
-    const request = w.indexedDB.open('nyc_rr_data', 1);
+    const request = w.indexedDB.open(`nyc_rr_data`, 1);
 
     // Create the object store.
     request.onupgradeneeded = event => {
       const db = event.target.result;
-      db.createObjectStore('restaurants', {keyPath: 'id'});
+      db.createObjectStore(itemsString, {keyPath: 'id'});
+      if (itemsString === 'restaurants') {
+        db.createObjectStore('reviews', {keyPath: 'id'})
+          .createIndex('restaurant_id', 'restaurant_id', {unique: false});
+      }
     };
 
-    // The fetchRestaurants function must return a Promise.
+    // The fetchItems function must return a Promise.
     return new Promise(resolve => {
 
       request.onsuccess = event => {
         const db = event.target.result;
         // Open a transaction and obtain a reference to the object store.
-        const store = db.transaction(['restaurants'], 'readwrite').objectStore('restaurants');
+        const store = db.transaction([itemsString], 'readonly').objectStore(itemsString);
+        const indexOrStore = (itemsString === 'reviews') ? store.index('restaurant_id') : store;
 
         resolve(new Promise(resolve => {
           // Use cursors to retrieve all objects in the object store and add them to an array.
-          let IDBRestaurants = [];
-          store.openCursor().onsuccess = event => {
+          let IDBItems = [];
+
+          const range = restaurantId ? IDBKeyRange.only(restaurantId) : null;
+          indexOrStore.openCursor(range).onsuccess = event => {
             let cursor = event.target.result;
             // Check if the object store is empty.
-            if (!cursor && !IDBRestaurants.length) {
+            if (!cursor && !IDBItems.length) {
               // Fetch from the network.
-              resolve(fetch(DATABASE_URL)
+              resolve(fetch(url)
                 .then(response => {
                   if (!response.ok) {
                     throw Error(`Request failed. Returned status of ${response.statusText}`);
                   }
                   return response.json();
                 })
-                .then(restaurants => {
+                .then(items => {
                   // Open a transaction.
-                  const store = db.transaction(['restaurants'], 'readwrite').objectStore('restaurants');
+                  const store = db.transaction([itemsString], 'readwrite').objectStore(itemsString);
                   // Save data into the object store.
-                  restaurants.forEach(restaurant => {
-                    store.add(restaurant);
+                  items.forEach(item => {
+                    store.add(item);
                   });
-                  return restaurants;
+                  return items;
                 })
                 .catch(error => {
                   console.log(error);
                 }));
             } else if (cursor) { // Check the cursor.
               // Save cursor value in an array.
-              IDBRestaurants.push(cursor.value);
+              IDBItems.push(cursor.value);
               cursor.continue();
             } else {
               // Return all data from indexedDB.
-              resolve(IDBRestaurants);
+              resolve(IDBItems);
             }
           };
-          store.openCursor().onerror = event => {
+          indexOrStore.openCursor(range).onerror = event => {
             // Add a fallback.
             console.log(event.target.error);
-            resolve(onlyFetchRestaurants());
+            resolve(onlyFetchItems(itemsString, url));
           };
         }));
       };
       request.onerror = event=> {
         /* IndexedDB storage in browsers' privacy modes only lasts in-memory until the incognito session is closed (Private Browsing mode for Firefox and Incognito mode for Chrome, but in Firefox this is not implemented yet as of Nov 2015 so you can't use IndexedDB in Firefox Private Browsing at all). https://bugzilla.mozilla.org/show_bug.cgi?id=781982 */
         console.log(event.target.error);
-        resolve(onlyFetchRestaurants());
+        resolve(onlyFetchItems(itemsString, url));
       };
     });
   } else { // If indexedDB is not supported.
-    return onlyFetchRestaurants();
+    return onlyFetchItems(itemsString, url);
   }
 }
 
-function onlyFetchRestaurants() {
-  return fetch(DATABASE_URL)
+function onlyFetchItems(itemsString, url) {
+  return fetch(url)
       .then(response => {
         if (!response.ok) {
           throw Error(`Request failed. Returned status of ${response.statusText}`);
         }
         return response.json();
       })
-      .then(restaurants => {
-        return restaurants;
+      .then(items => {
+        return items;
       })
       .catch(error => {
         console.log(error);

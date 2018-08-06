@@ -398,7 +398,7 @@ body> header h1,
 }
 
 #static-map {
-  height: calc(100vh - 4.029412rem);
+  height: calc(100vh - 15.972412rem);
   width: 100%;
   background-color: #e5e3df; /* Google Map default background */
   background-size: cover;
@@ -409,6 +409,9 @@ body> header h1,
   height: 100%;
   background-size: cover;
   background-position: bottom;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: display;
 }
 
 .inside #static-map {
@@ -468,7 +471,7 @@ body> header h1,
 #filter-legend {
   color: #e0e0e0; /* GMD Grey 300 */
   font-weight: normal;
-  letter-spacing: 0.125em;
+  letter-spacing: 0.0512em;
   margin: 0 0 0.8em;
 }
 
@@ -847,7 +850,7 @@ abbr[class|="stars"] {
   }
 
   body:not(.inside) #static-map {
-    height: calc(100vh - 4.441177rem);
+    height: calc(100vh - 9.317095rem);
   }
 
   #restaurants-list,
