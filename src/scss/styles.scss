@@ -127,7 +127,7 @@ select {
   -moz-appearance: none; /* 1 */
   -webkit-appearance: none; /* 2 */
   appearance: none; /* 1, 2 */
-  height: 2.301468em; /* 3 */
+  height: 2.352941em; /* 3 */
   color: inherit;
   background-color: #fff;
   /* background-image: url('data:image/svg+xml;utf8,<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z" fill="rgba(0,0,0,0.8)"/></svg>'); */
@@ -143,7 +143,8 @@ select {
 input,
 textarea,
 select {
-  border: 1px solid #cfd8dc; /* GMD Blue Grey 100 */
+  border-radius: 0.125em;
+  border: 1px solid #78909C; /* GMD Blue Grey 400 */
 }
 
 .button {
@@ -155,6 +156,8 @@ select {
 a[href].button,
 button,
 [type="button"],
+[type="checkbox"],
+[type="radio"],
 [type="reset"],
 [type="submit"] {
   color: #fff;
@@ -169,6 +172,8 @@ button,
 a[href]:not(.skip-link).button,
 button,
 [type="button"],
+[type="checkbox"],
+[type="radio"],
 [type="reset"],
 [type="submit"] {
   -webkit-transition: all 0.3s ease;
@@ -191,6 +196,8 @@ button,
 a[href].button:hover,
 button:not([disabled]):hover,
 html [type="button"]:not([disabled]):hover,
+[type="checkbox"]:not([disabled]):hover,
+[type="radio"]:not([disabled]):hover,
 [type="reset"]:not([disabled]):hover,
 [type="submit"]:not([disabled]):hover {
   border: 2px solid #1565c0; /* GMD Blue 800 */
@@ -211,6 +218,8 @@ html [type="button"]:not([disabled]):hover,
 a[href].button:active,
 button:not([disabled]):active,
 html [type="button"]:not([disabled]):active,
+[type="checkbox"]:not([disabled]):active,
+[type="radio"]:not([disabled]):active,
 [type="reset"]:not([disabled]):active,
 [type="submit"]:not([disabled]):active {
   border: 2px solid #0d47a1; /* GMD Blue 900 */
@@ -248,6 +257,40 @@ video:not(:active):focus {
   outline: 2px solid #82b1ff; /* GMD Blue A100 */
 }
 
+[type="date"]:not([disabled]):not(:active):focus:invalid,
+[type="datetime-local"]:not([disabled]):not(:active):focus:invalid,
+[type="email"]:not([disabled]):not(:active):focus:invalid,
+[type="month"]:not([disabled]):not(:active):focus:invalid,
+[type="number"]:not([disabled]):not(:active):focus:invalid,
+[type="password"]:not([disabled]):not(:active):focus:invalid,
+[type="search"]:not([disabled]):not(:active):focus:invalid,
+[type="tel"]:not([disabled]):not(:active):focus:invalid,
+[type="text"]:not([disabled]):not(:active):focus:invalid,
+[type="time"]:not([disabled]):not(:active):focus:invalid,
+[type="url"]:not([disabled]):not(:active):focus:invalid,
+[type="week"]:not([disabled]):not(:active):focus:invalid,
+textarea:not([disabled]):focus:invalid {
+  outline-offset: 1px;
+  outline: 2px solid #ff8a80; /* GMD Red A100 */
+}
+
+[type="date"]:not([disabled]):not(:active):focus:valid,
+[type="datetime-local"]:not([disabled]):not(:active):focus:valid,
+[type="email"]:not([disabled]):not(:active):focus:valid,
+[type="month"]:not([disabled]):not(:active):focus:valid,
+[type="number"]:not([disabled]):not(:active):focus:valid,
+[type="password"]:not([disabled]):not(:active):focus:valid,
+[type="search"]:not([disabled]):not(:active):focus:valid,
+[type="tel"]:not([disabled]):not(:active):focus:valid,
+[type="text"]:not([disabled]):not(:active):focus:valid,
+[type="time"]:not([disabled]):not(:active):focus:valid,
+[type="url"]:not([disabled]):not(:active):focus:valid,
+[type="week"]:not([disabled]):not(:active):focus:valid,
+textarea:not([disabled]):focus:valid {
+  outline-offset: 1px;
+  outline: 2px solid #69f0ae; /* GMD Green A200 */
+}
+
 html [disabled],
 a:not([href]):not([rel]) {
   opacity: 0.4096;
@@ -282,8 +325,146 @@ th {
   text-align: right;
 }
 
-tr:nth-of-type(even) {
+tr:nth-of-type(odd) {
   background-color: rgba(144,164,174,0.2); /* GMD Blue Grey 300 */
+}
+
+fieldset {
+  border-radius: 1em;
+  border: 1px solid #cfd8dc; /* GMD Blue Grey 100 */
+}
+
+legend {
+  padding: 0 1em;
+}
+
+textarea {
+  resize: vertical;
+  vertical-align: top;
+  min-height: 7.03125em;
+}
+
+/* 1. Reset default appearance */
+[type="checkbox"],
+[type="radio"] {
+  text-align: center;
+  -webkit-appearance: none; /* 1 */
+  -moz-appearance: none; /* 1 */
+  appearance: none; /* 1 */
+}
+
+[type="checkbox"]:not(.button),
+[type="radio"]:not(.icon) {
+  vertical-align: middle;
+}
+
+/* Reset default appearance in Microsoft browsers */
+[type="checkbox"]::-ms-check,
+[type="radio"]::-ms-check {
+  display: none;
+}
+
+[type="checkbox"],
+[type="checkbox"]:not([disabled]):hover,
+[type="checkbox"]:not([disabled]):active,
+[type="radio"],
+[type="radio"]:not([disabled]):hover,
+[type="radio"]:not([disabled]):active {
+  border: 2px solid #546e7a; /* GMD Blue Grey 600 */
+  background-color: #fff;
+}
+
+/* 1. Fix outline in Firefox */
+[type="checkbox"]:not(.button),
+[type="radio"] {
+  width: 1.25em;
+  height: 1.25em;
+  line-height: 0; /* 1 */
+}
+
+[type="checkbox"]::before,
+[type="radio"]::before {
+  content: "\00a0";
+  display: block;
+}
+
+[type="checkbox"]:not(.button)::before,
+[type="radio"]::before {
+  position: relative;
+  color: #546e7a; /* GMD Blue Grey 600 */
+}
+
+[type="checkbox"]:not(.button)::before {
+  top: 45%;
+}
+
+[type="radio"]::before {
+  top: 37.5%;
+}
+
+[type="checkbox"]:not(.button):checked::before {
+  content: "✔";
+}
+
+[type="checkbox"].button,
+[type="radio"]:not(.icon) {
+  border-radius: 50%;
+}
+
+[type="checkbox"].button,
+[type="checkbox"].button:not([disabled]):hover,
+[type="checkbox"].button:not([disabled]):active {
+  border: 2px solid #fff;
+}
+
+[type="checkbox"].button::before {
+  content: "♡";
+  color: #dd2c00; /* GMD Deep Orange A700 */
+}
+
+[type="checkbox"]:checked.button::before {
+  content: "♥";
+}
+
+[type="radio"]:checked::before {
+  content: "●";
+}
+
+[type="radio"].icon,
+[type="radio"].icon:hover,
+[type="radio"].icon:active {
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+[type="radio"].icon::before {
+  content: "☆";
+  font-size: 1.5625em;
+  color: #dd2c00; /* GMD Deep Orange A700 */
+  text-shadow: 0.125em 0.32768em 0.4096em rgba(55, 71, 79, 0.2);
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+[type="radio"].icon:checked::before,
+.input-rating [type="radio"].icon:checked ~ [type="radio"].icon::before {
+  content: "★";
+}
+
+[type="radio"].icon:hover::before {
+  text-shadow: 0 0.125em 0.125em rgba(55, 71, 79, 0.32768);
+}
+
+.input-rating {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
 }
 
 .sr-only {
@@ -300,7 +481,8 @@ tr:nth-of-type(even) {
 
 /* ========== LAYOUT ========== */
 
-body {
+body,
+.layer {
   background-color: #eceff1; /* GMD Blue Grey 50 */
   background-image: -webkit-gradient(linear,left top, right bottom,from(#fff),to(#eceff1));
   background-image: -webkit-linear-gradient(top left,#fff,#eceff1);
@@ -322,6 +504,29 @@ body {
   -webkit-transition: opacity 0.3s;
   -o-transition: opacity 0.3s;
   transition: opacity 0.3s;
+}
+
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 888888;
+  -webkit-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  -webkit-transform: scale(0) translateZ(0);
+  transform: scale(0) translateZ(0);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.layer.opened {
+  -webkit-transform: scale(1) translateZ(0);
+  transform: scale(1) translateZ(0);
+  opacity: 1;
 }
 
 /* ========== .header ========== */
@@ -398,11 +603,14 @@ body> header h1,
 }
 
 #static-map {
-  height: calc(100vh - 15.972412rem);
+  height: calc(100vh - 16.101117rem);
   width: 100%;
-  background-color: #e5e3df; /* Google Map default background */
   background-size: cover;
   background-position: bottom;
+  -webkit-transition: opacity 0.3s;
+  -o-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+  opacity: 0;
 }
 
 #map {
@@ -542,10 +750,16 @@ body> header h1,
 
 #restaurants-list article> p:last-child {
   margin-top: 1.5625em;
-  text-align: right;
+}
+
+#restaurants-list article> p:last-child::after {
+  clear: both;
+  content: "";
+  display: block;
 }
 
 #restaurants-list a[href].button {
+  float: right;
   border-radius: 1.25em;
 }
 
@@ -607,7 +821,21 @@ body> header h1,
   font-weight: bold;
   text-align: left;
   padding-bottom: 1em!important;
-  border-bottom: 1px solid #eceff1; /* GMD Blue Grey 50 */
+}
+
+#restaurant-container> div p:last-child {
+  margin-top: 1.5625em;
+}
+
+#restaurant-container> div p:last-child::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+#restaurant-container button {
+  float: right;
+  border-radius: 1.25em;
 }
 
 /* ========== #reviews-container ========== */
@@ -741,6 +969,37 @@ abbr[class|="stars"] {
   text-decoration: none;
 }
 
+/* ========== .layer ========== */
+
+.layer {
+  padding: 0 1rem;
+}
+
+.layer form {
+  margin: 0 auto;
+  max-width: 885.156px;
+}
+
+.layer form> p:first-child {
+  text-align: right;
+}
+
+.layer label,
+.layer legend {
+  display: block;
+  font-weight: bold;
+}
+
+.layer [type="text"],
+.layer textarea {
+  width: 100%;
+}
+
+.layer form> p:last-child {
+  margin-top: 1.5625em;
+  text-align: right;
+}
+
 /* ========== #update-alert ========== */
 
 #update-alert {
@@ -748,6 +1007,7 @@ abbr[class|="stars"] {
   bottom: 0;
   width: 100%;
   position: fixed;
+  z-index: 999999;
   padding: 0 0.5rem;
   text-align: center;
   color: #e0e0e0; /* GMD Grey 300 */
@@ -776,7 +1036,7 @@ abbr[class|="stars"] {
   margin-left: 1rem;
 }
 
-#update-alert.open {
+#update-alert.opened {
   -webkit-transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
   transition: opacity 0.3s steps(1,start), -webkit-transform 0.3s ease;
   -o-transition: transform 0.3s ease, opacity 0.3s steps(1,start);
@@ -850,7 +1110,7 @@ abbr[class|="stars"] {
   }
 
   body:not(.inside) #static-map {
-    height: calc(100vh - 9.317095rem);
+    height: calc(100vh - 9.381435rem);
   }
 
   #restaurants-list,

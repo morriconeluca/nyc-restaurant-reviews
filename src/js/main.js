@@ -93,7 +93,7 @@ onReady(() => {
 
         // Set a timeout to make animation visible.
         setTimeout(() => {
-          div.className = 'open';
+          div.className = 'opened';
           /* 1. Set a timeout to listen the alert text in right order with screen readers. 2. On load, sometimes Google Maps grabs the focus, a timeout fixes this behaviour. */
           setTimeout(() => {
             refresh.focus(); // Move focus to the refresh button.
@@ -144,7 +144,7 @@ onReady(() => {
        * Dismiss, hide and remove the alert.
        */
       function hideAlert(panel) {
-        panel.classList.remove('open');
+        panel.classList.remove('opened');
         d.body.focus(); // Move focus to the body.
         setTimeout(() => {
           panel.remove();

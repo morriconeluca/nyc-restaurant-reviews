@@ -40,7 +40,8 @@ const port = 1337,
 
 let staticMap,
     map,
-    tilesLoaded = false;
+    tilesLoaded,
+    mapOnFilter;
 
 /**
  * Catch DOMContentLoaded event even the script is loading asynchronously.
@@ -54,7 +55,8 @@ function onReady(callback) {
 
 /**
  * MAIN PROCESS.
- */ fetchItems('restaurants', RESTAURANTS_URL)
+ */
+fetchItems('restaurants', RESTAURANTS_URL)
   .then(restaurants => {
     if (w.location.pathname === '/' || w.location.pathname === '/index.html') { // === HOME - index.html ===
       (() => {
@@ -85,7 +87,7 @@ function onReady(callback) {
         });
 
         function setStaticMap(params) {
-          staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${params.width}x${params.height}&scale=${params.scale}&format=jpg&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
+          lazyLoadStaticMap(`https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${params.width}x${params.height}&scale=${params.scale}&format=jpg&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA`);
         }
 
         /**
@@ -199,6 +201,12 @@ function onReady(callback) {
               updateRestaurantsHTML(currentRestaurants);
               lazyLoad();
             });
+
+          // Load map if it is not loaded yet.
+          if (staticMap && !map) {
+            mapOnFilter = true;
+            actionOnMap();
+          }
         }
 
         /**
@@ -258,6 +266,8 @@ function onReady(callback) {
                 address = d.cE('address'),
                 addressContent = d.cE('p'),
                 more = d.cE('p'),
+                label = d.cE('label'),
+                favorite = d.cE('input'),
                 button = d.cE('a');
 
           addImageOfTo(restaurant, article, true);
@@ -270,6 +280,16 @@ function onReady(callback) {
           addressContent.innerHTML = restaurant.address;
           address.appendChild(addressContent);
 
+          favorite.type = 'checkbox';
+          favorite.id = `favorite-${restaurant.id}`;
+          favorite.value = restaurant.id;
+          favorite.checked = restaurant.is_favorite;
+          favorite.className = 'button';
+
+          label.htmlFor = favorite.id;
+          label.className = 'sr-only';
+          label.innerHTML = `Is ${restaurant.name} your favorite restaurant?`;
+
           button.innerHTML = 'View Details';
           button.href = urlForRestaurant(restaurant);
           button.className = 'button';
@@ -277,7 +297,7 @@ function onReady(callback) {
           /* The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ */
           /*  One alternative option could be using aria-labelledby, but in this case it's better using the aria-label attribute instead of title. N.B. The aria-label overrides the link text. */
           button.setAttribute('aria-label', `View Details about ${restaurant.name}`);
-          more.appendChild(button);
+          more.append(label, favorite, button);
 
           article.append(name, neighborhood, address, more);
 
@@ -315,7 +335,7 @@ function onReady(callback) {
         });
 
         function setStaticMap(params) {
-          staticMap.style.backgroundImage = `url(https://maps.googleapis.com/maps/api/staticmap?size=${params.width}x${params.height}&scale=${params.scale}&markers=color:red%7C${restaurant.latlng.lat},${restaurant.latlng.lng}&format=jpg&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA)`;
+          lazyLoadStaticMap(`https://maps.googleapis.com/maps/api/staticmap?size=${params.width}x${params.height}&scale=${params.scale}&markers=color:red%7C${restaurant.latlng.lat},${restaurant.latlng.lng}&format=jpg&key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA`);
         }
 
         /**
@@ -368,7 +388,14 @@ function onReady(callback) {
                 name = d.gEBI('restaurant-name'),
                 address = d.gEBI('restaurant-address'),
                 cuisine = d.gEBI('restaurant-cuisine'),
-                strong = d.cE('strong');
+                strong = d.cE('strong'),
+                favorite = d.gEBI('favorite'),
+                addReviewButton = d.gEBI('add-review-button'),
+                overlay = d.gEBI('overlay'),
+                username = d.gEBI('username'),
+                closeOverlayButton = d.gEBI('close-overlay-button'),
+                page = d.gEBI('page'),
+                focusableElementsString = ['a[href]', 'area[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', 'iframe', 'object', 'embed', '[contenteditable]'].join(',');
 
           // Add a more meaningful title to the page for better accessibility.
           d.title = `${restaurant.name} - Restaurant Info and Reviews`;
@@ -386,6 +413,57 @@ function onReady(callback) {
           if (restaurant.operating_hours) {
             fillRestaurantHoursHTML(restaurant.operating_hours);
           }
+
+          favorite.value = restaurant.id;
+          favorite.checked = restaurant.is_favorite;
+
+          addListenerTo(addReviewButton, () => {
+            const focusableElements = [].slice.call(page.querySelectorAll(focusableElementsString));
+            const tabindexZeroElements = [].slice.call(page.querySelectorAll('[tabindex="0"]'));
+            const formElements = [].slice.call(overlay.querySelectorAll('[tabindex="-1"]'));
+
+            // Open overlay.
+            focusableElements.forEach((element) => {
+              element.tabIndex = -1;
+            });
+
+            tabindexZeroElements.forEach((element) => {
+              element.tabIndex = -1;
+            });
+
+            formElements.forEach((element) => {
+              element.tabIndex = 0;
+            });
+
+            overlay.removeAttribute('aria-hidden');
+            overlay.classList.add('opened');
+            page.setAttribute('aria-hidden', true);
+
+            // Move focus to first input text.
+            username.focus();
+
+            addListenerTo(closeOverlayButton, () => {
+              // Close overlay.
+              focusableElements.forEach((element) => {
+                element.removeAttribute('tabindex');
+              });
+
+              tabindexZeroElements.forEach((element) => {
+                element.tabIndex = 0;
+              });
+
+              formElements.forEach((element) => {
+                element.tabIndex = -1;
+              });
+
+              page.removeAttribute('aria-hidden');
+              overlay.classList.remove('opened');
+              overlay.setAttribute('aria-hidden', true);
+
+              // Move focus to add review button.
+              addReviewButton.focus();
+            }, true);
+          });
 
           fetchItems('reviews', RESTAURANT_REVIEWS_URL + restaurant.id, restaurant.id)
             .then(reviews => {
@@ -436,7 +514,7 @@ function onReady(callback) {
             return;
           }
 
-          reviews.forEach(review => {
+          reviews.reverse().forEach(review => {
             ul.appendChild(createRestaurantReviewHTML(review));
           });
 
@@ -684,18 +762,28 @@ function getResponsiveStaticMapParameters() {
 }
 
 /**
+ * Asyncronous fetching Google Maps static API with lazy loading.
+ */
+function lazyLoadStaticMap(url) {
+  fetch(url)
+    .then(response => response.blob())
+      .then(images => {
+        staticMap.style.backgroundImage = `url(${URL.createObjectURL(images)})`;
+        staticMap.style.opacity = 1;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+}
+
+/**
  * Add event listeners to static map for loading dynamic map API.
  */
 function addListenerToStaticMap() {
   staticMap.style.cursor = 'pointer';
 
-  addListenerTo(staticMap, (moveFocus) => {
-    if (!n.onLine) { // Check if offline.
-      showOfflineAlert('x');
-    } else {
-      loadMap();
-      swapMap(moveFocus);
-    }
+  addListenerTo(staticMap, () => {
+    actionOnMap();
   }, true);
 }
 
@@ -710,10 +798,10 @@ function addListenerTo(element, callback, remove) {
   };
 
   // Function fire on click event.
-  const doit = (event, moveFocus) => {
+  const doit = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    callback(moveFocus);
+    callback();
     if (remove) removeListeners();
   };
 
@@ -727,6 +815,18 @@ function addListenerTo(element, callback, remove) {
   // Add both event listeners.
   element.addEventListener('click', doit);
   element.addEventListener('keydown', f);
+}
+
+/**
+ * Do what you have to do on map.
+ */
+function actionOnMap() {
+  if (!n.onLine) { // Check if offline.
+    showOfflineAlert('x');
+  } else {
+    loadMap();
+    swapMap();
+  }
 }
 
 /**
@@ -758,6 +858,7 @@ function showOfflineAlert(button) {
   }
 
   staticMap.className = 'offline';
+  staticMap.style.opacity = 1;
   staticMap.appendChild(offlineAlert);
   staticMap.style.cursor = 'default';
 }
@@ -769,16 +870,11 @@ function loadMap() {
   addAsyncScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyAxfOOcB40yMKfupF4qyfa4hwvhTclZboA&libraries=places&callback=initMap');
 }
 
-function swapMap(moveFocus) {
+function swapMap() {
   d.gEBI('map').style.display = 'block';
   staticMap.removeAttribute('tabindex');
   staticMap.removeAttribute('role');
   staticMap.removeAttribute('aria-label');
-  if (moveFocus) {
-    setTimeout(() => {
-      d.querySelector('#map div[tabindex="0"]').focus();
-    }, 1000);
-  }
 }
 
 /**
@@ -804,6 +900,7 @@ function initMapA11y(callback, isIndex) {
       callback();
       addA11yToMap(isIndex);
       tilesLoaded = true;
+      if (!mapOnFilter) d.querySelector('#map div[tabindex="0"]').focus();
       google.maps.event.removeListener(listenerTiles);
     });
   } else {

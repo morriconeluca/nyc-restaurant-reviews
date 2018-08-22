@@ -38,65 +38,87 @@
 </head>
 
 <body class="inside">
-  <a class="skip-link button" href="#restaurant-container">Skip to main content</a>
+  <div id="page">
+    <a class="skip-link button" href="#restaurant-container">Skip to main content</a>
 
-  <!-- The HTML5 header element is not considered a banner landmark when it is descendant of nav. https://www.w3.org/TR/2017/NOTE-wai-aria-practices-1.1-20171214/examples/landmarks/banner.html -->
-  <div role="banner">
-      <!-- Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute -->
-      <!-- The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ -->
-      <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. -->
-    <strong><a href="/">Restaurant Reviews</a></strong>
-  </div>
-
-  <nav aria-label="Breadcrumb">
-    <div class="container">
-      <!-- Beginning breadcrumb -->
-      <ol id="breadcrumb">
-        <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. See above. -->
-        <li><a href="/">Home</a></li>
-      </ol>
-      <!-- End breadcrumb -->
+    <!-- The HTML5 header element is not considered a banner landmark when it is descendant of nav. https://www.w3.org/TR/2017/NOTE-wai-aria-practices-1.1-20171214/examples/landmarks/banner.html -->
+    <div role="banner">
+        <!-- Relying on the title attribute is currently discouraged as many user agents do not expose the attribute in an accessible manner as required by w3c specifications. https://www.w3.org/TR/html/dom.html#the-title-attribute -->
+        <!-- The only very tiny exception a title attribute will be read by a screen reader is if there's absolutely no link anchor text. https://silktide.com/i-thought-title-text-improved-accessibility-i-was-wrong/ -->
+        <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. -->
+      <strong><a href="/">Restaurant Reviews</a></strong>
     </div>
-  </nav>
 
-  <!-- Beginning main -->
-  <main id="main-content" class="container" role="main">
-    <!-- Beginning map -->
-    <aside id="map-container">
-      <div id="static-map" tabindex="0" role="button" aria-label="Click to activate the map.">
-        <!-- Tha map should have a role of application. -->
-        <div id="map" role="application" style="display: none;"></div>
+    <nav aria-label="Breadcrumb">
+      <div class="container">
+        <!-- Beginning breadcrumb -->
+        <ol id="breadcrumb">
+          <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. See above. -->
+          <li><a href="/">Home</a></li>
+        </ol>
+        <!-- End breadcrumb -->
       </div>
-    </aside>
-    <!-- End map -->
-    <!-- Beginning restaurant -->
-    <div id="restaurant-container">
-      <div>
-        <h1 id="restaurant-name"></h1>
-        <p id="restaurant-cuisine"></p>
-        <address><p id="restaurant-address"></p></address>
-        <figure class="scrollable-x">
-          <table id="restaurant-hours">
-            <caption>Restaurant opening times:</caption>
-          </table>
-        </figure>
-      </div>
-    </div>
-    <!-- end restaurant -->
-    <!-- Beginning reviews -->
-    <section id="reviews-container">
-      <ul id="reviews-list"></ul>
-    </section>
-    <!-- End reviews -->
-  </main>
-  <!-- End main -->
+    </nav>
 
-  <!-- Beginning footer -->
-  <footer id="footer">
-    <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. See above. -->
-    <p>Copyright © <script>document.write(new Date().getFullYear());</script> <strong><a href="/">Restaurant Reviews</a></strong>. All Rights Reserved.</p>
-  </footer>
-  <!-- End footer -->
+    <!-- Beginning main -->
+    <main id="main-content" class="container" role="main">
+      <!-- Beginning map -->
+      <aside id="map-container">
+        <div id="static-map" tabindex="0" role="button" aria-label="Click to activate the map.">
+          <!-- Tha map should have a role of application. -->
+          <div id="map" role="application" style="display: none;"></div>
+        </div>
+      </aside>
+      <!-- End map -->
+      <!-- Beginning restaurant -->
+      <div id="restaurant-container">
+        <div>
+          <h1 id="restaurant-name"></h1>
+          <p id="restaurant-cuisine"></p>
+          <address><p id="restaurant-address"></p></address>
+          <figure class="scrollable-x">
+            <table id="restaurant-hours">
+              <caption>Restaurant opening times:</caption>
+            </table>
+          </figure>
+          <p><label class="sr-only" for="favorite">Is it your favorite restaurant?</label><input type="checkbox" id="favorite" class="button"><button type="button" id="add-review-button">Add Review</button></p>
+        </div>
+      </div>
+      <!-- end restaurant -->
+      <!-- Beginning reviews -->
+      <section id="reviews-container">
+        <ul id="reviews-list"></ul>
+      </section>
+      <!-- End reviews -->
+    </main>
+    <!-- End main -->
+
+    <!-- Beginning footer -->
+    <footer id="footer">
+      <!-- Here the title attribute is to avoid, and the link text is enough for accessibility. See above. -->
+      <p>Copyright © <script>document.write(new Date().getFullYear());</script> <strong><a href="/">Restaurant Reviews</a></strong>. All Rights Reserved.</p>
+    </footer>
+    <!-- End footer -->
+  </div> <!-- End page -->
+
+  <section id="overlay" class="layer" role="dialog" aria-hidden="true">
+    <form>
+      <p><button type="button" tabindex="-1" id="close-overlay-button" aria-label="Close">✖</button></p>
+      <p><label for="username">What's your name?</label> <input id="username" name="username" type="text" placeholder="Your first name" minlength="2" maxlength="50" required autocomplete="given-name"></p>
+      <fieldset>
+        <legend tabindex="-1">Rate this restaurant:</legend>
+        <p><span class="input-rating">
+          <label class="sr-only" for="star5">Rating: 5 of 5</label><input type="radio" tabindex="-1" name="star" id="star5" class="icon" value="5" required>
+          <label class="sr-only" for="star4">Rating: 4 of 5</label><input type="radio" tabindex="-1" name="star" id="star4" class="icon" value="4">
+          <label class="sr-only" for="star3">Rating: 3 of 5</label><input type="radio" tabindex="-1" name="star" id="star3" class="icon" value="3">
+          <label class="sr-only" for="star2">Rating: 2 of 5</label><input type="radio" tabindex="-1" name="star" id="star2" class="icon" value="2">
+          <label class="sr-only" for="star1">Rating: 1 of 5</label><input type="radio" tabindex="-1" name="star" id="star1" class="icon" value="1">
+        </span></p>
+      </fieldset>
+      <p><label for="comments">Leave your comments:</label> <textarea tabindex="-1" name="comments" id="comments" placeholder="Write here…" minlength="50" maxlength="1000" required></textarea></p>
+      <p><button type="reset" tabindex="-1" aria-label="Reset">♻</button> <button type="submit" tabindex="-1">SUBMIT</button></p>
+    </form>
+  </section>
 </body>
 
 </html>
