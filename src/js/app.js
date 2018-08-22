@@ -392,6 +392,7 @@ fetchItems('restaurants', RESTAURANTS_URL)
                 favorite = d.gEBI('favorite'),
                 addReviewButton = d.gEBI('add-review-button'),
                 overlay = d.gEBI('overlay'),
+                form = d.querySelector('#overlay form'),
                 username = d.gEBI('username'),
                 closeOverlayButton = d.gEBI('close-overlay-button'),
                 page = d.gEBI('page'),
@@ -417,7 +418,7 @@ fetchItems('restaurants', RESTAURANTS_URL)
           favorite.value = restaurant.id;
           favorite.checked = restaurant.is_favorite;
 
-          addListenerTo(addReviewButton, () => {
+          addReviewButton.addEventListener('click', () => {
             const focusableElements = [].slice.call(page.querySelectorAll(focusableElementsString));
             const tabindexZeroElements = [].slice.call(page.querySelectorAll('[tabindex="0"]'));
             const formElements = [].slice.call(overlay.querySelectorAll('[tabindex="-1"]'));
@@ -442,8 +443,24 @@ fetchItems('restaurants', RESTAURANTS_URL)
             // Move focus to first input text.
             username.focus();
 
-            addListenerTo(closeOverlayButton, () => {
-              // Close overlay.
+            // Add event listener to close button.
+            closeOverlayButton.addEventListener('click', closeOverlay);
+
+            // Add event listener to close overlay on press ESC.
+            d.addEventListener('keydown', onESC);
+
+            // Close overlay on press ESC.
+            function onESC(event) {
+              if (event.keyCode === 27) {
+                event.preventDefault();
+                event.stopPropagation();
+                closeOverlay();
+                closeOverlayButton.removeEventListener('click', closeOverlay);
+              }
+            }
+
+            // Close overlay function.
+            function closeOverlay() {
               focusableElements.forEach((element) => {
                 element.removeAttribute('tabindex');
               });
@@ -462,7 +479,10 @@ fetchItems('restaurants', RESTAURANTS_URL)
 
               // Move focus to add review button.
               addReviewButton.focus();
-            }, true);
+
+              // Remove event listener on keydown.
+              d.removeEventListener('keydown', onESC);
+            }
           });
 
           fetchItems('reviews', RESTAURANT_REVIEWS_URL + restaurant.id, restaurant.id)
@@ -791,12 +811,6 @@ function addListenerToStaticMap() {
  * Add listeners to an element for tracking click and keydown events.
  */
 function addListenerTo(element, callback, remove) {
-  // Remove both event listeners.
-  const removeListeners = () => {
-    element.removeEventListener('click', doit);
-    element.removeEventListener('keydown', f);
-  };
-
   // Function fire on click event.
   const doit = (event) => {
     event.preventDefault();
@@ -815,6 +829,12 @@ function addListenerTo(element, callback, remove) {
   // Add both event listeners.
   element.addEventListener('click', doit);
   element.addEventListener('keydown', f);
+
+  // Remove both event listeners.
+  function removeListeners() {
+    element.removeEventListener('click', doit);
+    element.removeEventListener('keydown', f);
+  }
 }
 
 /**
