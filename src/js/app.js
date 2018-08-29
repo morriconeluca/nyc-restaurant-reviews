@@ -863,7 +863,7 @@ function addReview(data) {
   // When offline register a background sync tag.
   if (!n.onLine && n.serviceWorker && w.SyncManager && w.indexedDB) {
     // Save data in indexedDB and add offline request flag.
-    saveReviewOnIndexedDB(data, true)
+    return saveReviewOnIndexedDB(data, true)
       .then(reviewId => {
         n.serviceWorker.ready
           .then(sw => {
@@ -871,8 +871,6 @@ function addReview(data) {
           })
           .catch(error => {
             console.log(error);
-            // Try to update database on network with fetch API.
-            updateReviewOnline(data);
           });
       });
   }

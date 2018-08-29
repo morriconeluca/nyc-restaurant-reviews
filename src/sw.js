@@ -115,23 +115,47 @@ s.addEventListener('fetch', event => {
   }
 });
 
-
 /**
  * Listen for background sync tags.
  */
 s.addEventListener('sync', event => {
-  if (event.tag.indexOf('favorite-sync-') > -1) {
-    event.waitUntil((() => {
-      const restaurantId = parseInt(event.tag.slice(14));
-      handleOfflineRequestForRestaurant(restaurantId);
-    })());
-  } else if (event.tag.indexOf('review-sync-') > -1) {
-    event.waitUntil((() => {
-      const reviewId = event.tag.slice(12);
-      handleOfflineRequestForReview(reviewId);
-    })());
-  }
+  event.waitUntil(doSync(event));
 });
+
+/**
+ * Do something on background sync.
+ */
+function doSync(event) {
+  return new Promise(resolve => {
+    if (event.tag.indexOf('favorite-sync-') > -1) {
+      resolve(syncRestaurant(event.tag));
+    } else if (event.tag.indexOf('review-sync-') > -1) {
+      resolve(syncReview(event.tag));
+    }
+  });
+}
+
+/**
+ * Do something for background sync of restaurant.
+ */
+function syncRestaurant(tagOrMessage) {
+  return new Promise(resolve => {
+    const restaurantId = parseInt(tagOrMessage.slice(14));
+    handleOfflineRequestForRestaurant(restaurantId);
+    resolve();
+  });
+}
+
+/**
+ * Do something for background sync of review.
+ */
+function syncReview(tagOrMessage) {
+  return new Promise(resolve => {
+    const reviewId = tagOrMessage.slice(12);
+    handleOfflineRequestForReview(reviewId);
+    resolve();
+  });
+}
 
 /**
  * Function to handle offline request for a restaurant.
@@ -259,18 +283,12 @@ s.addEventListener('message', function(event) {
 
   /* Listen for messages to handle forgotten offline requests for restaurants. */
   if (event.data.action.indexOf('favorite-sync-') > -1) {
-    event.waitUntil((() => {
-      const restaurantId = parseInt(event.data.action.slice(14));
-      handleOfflineRequestForRestaurant(restaurantId);
-    })());
+    event.waitUntil(syncRestaurant(event.data.action));
   }
 
   /* Listen for messages to handle forgotten offline requests for reviews. */
   if (event.data.action.indexOf('review-sync-') > -1) {
-    event.waitUntil((() => {
-      const reviewId = event.data.action.slice(12);
-      handleOfflineRequestForReview(reviewId);
-    })());
+    event.waitUntil(syncReview(event.data.action));
   }
 });
 
