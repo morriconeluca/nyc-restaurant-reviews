@@ -111,6 +111,60 @@ s.addEventListener('fetch', event => {
   }
 });
 
+
+/**
+ * Listen for background sync tags.
+ */
+s.addEventListener('sync', event => {
+  if (event.tag.indexOf('favorite-sync-') > -1) {
+    event.waitUntil((() => {
+      const restaurantId = parseInt(event.tag.slice(14));
+      handleOfflineRequestForRestaurant(restaurantId);
+    })());
+  }
+});
+
+/**
+ * Function to handle offline request for a restaurant.
+ */
+function handleOfflineRequestForRestaurant(restaurantId) {
+  // Open a connection with indexedDB.
+  const request = s.indexedDB.open(`nyc_rr_data`, 1);
+
+  // Open a transaction and obtain a reference to the object store.
+  request.onsuccess = event => {
+    const db = event.target.result,
+          store = db.transaction(['restaurants'], 'readonly').objectStore('restaurants'),
+          request = store.get(restaurantId); // Get data from indexedDB.
+
+    // Update database on network with fetch API.
+    request.onsuccess = event => {
+      fetch(`http://localhost:1337/restaurants/${restaurantId}/?is_favorite=${event.target.result.is_favorite}`, {
+        method: 'PUT'
+      })
+      .then(() => {
+        fetch(`http://localhost:1337/restaurants/${restaurantId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw Error(`Request failed. Returned status of ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then(restaurant => {
+            // Open a transaction.
+            const store = db.transaction(['restaurants'], 'readwrite').objectStore('restaurants');
+
+            // Update data into the object store.
+            store.put(restaurant);
+          });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    };
+  };
+}
+
 /**
  * Listen messages from client.
  */
@@ -132,6 +186,14 @@ s.addEventListener('message', function(event) {
       /* After receiving a message from one client, the current SW turns the message to all clients. */
       sendMessageToClients('dismissed')
     );
+  }
+
+  /* Listen for messages to handle forgotten offline requests for restaurants. */
+  if (event.data.action.indexOf('favorite-sync-') > -1) {
+    event.waitUntil((() => {
+      const restaurantId = parseInt(event.data.action.slice(14));
+      handleOfflineRequestForRestaurant(restaurantId);
+    })());
   }
 });
 

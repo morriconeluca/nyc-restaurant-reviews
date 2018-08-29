@@ -1110,7 +1110,7 @@ abbr[class|="stars"] {
   }
 
   body:not(.inside) #static-map {
-    height: calc(100vh - 9.381435rem);
+    height: calc(100vh - 16.983529rem);
   }
 
   #restaurants-list,
@@ -1214,9 +1214,9 @@ abbr[class|="stars"] {
     margin-left: 1rem;
   }
 
-  /* body:not(.inside) #static-map {
-    height: calc(100vh - 4.441177rem - 5.375882rem);
-  } */
+  body:not(.inside) #static-map {
+    height: calc(100vh - 9.381435rem);
+  }
 }
 
 @media screen and (min-width: 1080px) {

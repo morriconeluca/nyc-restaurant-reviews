@@ -282,9 +282,16 @@ fetchItems('restaurants', RESTAURANTS_URL)
 
           favorite.type = 'checkbox';
           favorite.id = `favorite-${restaurant.id}`;
-          favorite.value = restaurant.id;
-          favorite.checked = restaurant.is_favorite;
+          /* Normally we should write "favorite.checked = restaurant.is_favorite;" but there is a bug in the server of stage 3. Favourites endpoints writes incorrectly: the value becomes a string instead a boolean. So we must use a workaround. See: https://github.com/udacity/mws-restaurant-stage-3/issues/5 */
+          favorite.checked = (restaurant.is_favorite === 'false') ? false : (restaurant.is_favorite === 'true') ? true : restaurant.is_favorite;
           favorite.className = 'button';
+
+          favorite.addEventListener('click', () => {
+            setFavorite({
+              id: restaurant.id,
+              is_favorite: favorite.checked
+            });
+          });
 
           label.htmlFor = favorite.id;
           label.className = 'sr-only';
@@ -415,8 +422,15 @@ fetchItems('restaurants', RESTAURANTS_URL)
             fillRestaurantHoursHTML(restaurant.operating_hours);
           }
 
-          favorite.value = restaurant.id;
-          favorite.checked = restaurant.is_favorite;
+          /* Normally we should write "favorite.checked = restaurant.is_favorite;" but there is a bug in the server of stage 3. Favourites endpoints writes incorrectly: the value becomes a string instead a boolean. So we must use a workaround. See: https://github.com/udacity/mws-restaurant-stage-3/issues/5 */
+          favorite.checked = (restaurant.is_favorite === 'false') ? false : (restaurant.is_favorite === 'true') ? true : restaurant.is_favorite;
+
+          favorite.addEventListener('click', () => {
+            setFavorite({
+              id: restaurant.id,
+              is_favorite: favorite.checked
+            });
+          });
 
           addReviewButton.addEventListener('click', () => {
             const focusableElements = [].slice.call(page.querySelectorAll(focusableElementsString));
@@ -448,6 +462,11 @@ fetchItems('restaurants', RESTAURANTS_URL)
 
             // Add event listener to close overlay on press ESC.
             d.addEventListener('keydown', onESC);
+
+            form.addEventListener('submit', event => {
+              event.preventDefault();
+              event.stopPropagation();
+            });
 
             // Close overlay on press ESC.
             function onESC(event) {
@@ -604,14 +623,15 @@ function fetchItems(itemsString, url, restaurantId) {
     // Open a connection with indexedDB.
     const request = w.indexedDB.open(`nyc_rr_data`, 1);
 
-    // Create the object store.
+    // Create the objects store.
     request.onupgradeneeded = event => {
       const db = event.target.result;
-      db.createObjectStore(itemsString, {keyPath: 'id'});
-      if (itemsString === 'restaurants') {
-        db.createObjectStore('reviews', {keyPath: 'id'})
-          .createIndex('restaurant_id', 'restaurant_id', {unique: false});
-      }
+
+      // Create the object store for restaurants.
+      db.createObjectStore('restaurants', {keyPath: 'id'});
+
+      // Create the object store for reviews with restaurant_id index.
+      db.createObjectStore('reviews', {keyPath: 'id'}).createIndex('restaurant_id', 'restaurant_id', {unique: false});
     };
 
     // The fetchItems function must return a Promise.
@@ -645,7 +665,7 @@ function fetchItems(itemsString, url, restaurantId) {
                   const store = db.transaction([itemsString], 'readwrite').objectStore(itemsString);
                   // Save data into the object store.
                   items.forEach(item => {
-                    store.add(item);
+                    store.put(item);
                   });
                   return items;
                 })
@@ -655,6 +675,12 @@ function fetchItems(itemsString, url, restaurantId) {
             } else if (cursor) { // Check the cursor.
               // Save cursor value in an array.
               IDBItems.push(cursor.value);
+
+              if (n.onLine && cursor.value.offline_request) {
+                // Handle forgotten offline requests.
+                handleForgottenOfflineRequests(itemsString, cursor.value.id);
+              }
+
               cursor.continue();
             } else {
               // Return all data from indexedDB.
@@ -679,6 +705,9 @@ function fetchItems(itemsString, url, restaurantId) {
   }
 }
 
+/**
+ * Fetch all restaurants or reviews if indexedDB is not supported.
+ */
 function onlyFetchItems(itemsString, url) {
   return fetch(url)
       .then(response => {
@@ -693,6 +722,102 @@ function onlyFetchItems(itemsString, url) {
       .catch(error => {
         console.log(error);
       });
+}
+
+/**
+ * Handle forgotten offline requests after page reload.
+ */
+function handleForgottenOfflineRequests(itemsString, restaurantId) {
+  // Exit if service worker or sync manager are unavailable.
+  if (!n.serviceWorker || !w.SyncManager) {
+    return;
+  }
+
+  /* Send a message to SW to handle forgotten offline requests for a restaurant. */
+  if (itemsString === 'restaurants') {
+    n.serviceWorker.controller.postMessage({
+      action: `favorite-sync-${restaurantId}`
+    });
+  }
+}
+
+/**
+ * Set favorite with background sync implementation.
+ */
+function setFavorite(data) {
+  // When offline register a background sync tag.
+  if (!n.onLine && n.serviceWorker && w.SyncManager && w.indexedDB) {
+    data.offline_request = true;
+    // Save data in indexedDB.
+    saveFavoriteOnIndexedDB(data);
+    n.serviceWorker.ready
+      .then(sw => {
+        return sw.sync.register(`favorite-sync-${data.id}`);
+      })
+      .catch(error => {
+        console.log(error);
+        // Try to update database on network with fetch API.
+        fetchFavorite(data);
+      });
+    return;
+  }
+
+  // Save data in indexedDB if it is supported.
+  if (w.indexedDB) {
+    saveFavoriteOnIndexedDB(data);
+  }
+
+  // Update database on network with fetch API.
+  fetchFavorite(data);
+}
+
+/**
+ * Function definition for updating database on network.
+ */
+function fetchFavorite(data) {
+  fetch(`${RESTAURANTS_URL}/${data.id}/?is_favorite=${data.is_favorite}`, {
+      method: 'PUT'
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
+
+/**
+ * Save if the restaurant is favorite on idexedDB.
+ */
+function saveFavoriteOnIndexedDB(data) {
+  // Open a connection with indexedDB.
+  const request = w.indexedDB.open(`nyc_rr_data`, 1);
+
+  // Open a transaction and obtain a reference to the object store.
+  request.onsuccess = event => {
+    const db = event.target.result,
+          store = db.transaction(['restaurants'], 'readwrite').objectStore('restaurants'),
+          request = store.get(data.id); // Get data from indexedDB.
+
+    // Update data in indexedDB.
+    request.onsuccess = event => {
+      const dbData = event.target.result;
+      dbData.is_favorite = data.is_favorite;
+
+      if (data.offline_request) dbData.offline_request = true;
+
+      const request = store.put(dbData);
+
+      request.onerror = event => {
+        console.log(event.target.error);
+      };
+    };
+
+    request.onerror = event => {
+      console.log(event.target.error);
+    };
+  };
+
+  request.onerror = event => {
+    console.log(event.target.error);
+  };
 }
 
 /**
