@@ -885,7 +885,7 @@ body> header h1,
   margin: 0;
 }
 
-#reviews-list time {
+#reviews-list .time {
   float: right;
   font-size: 0.8em;
   margin-top: 0.25em;
@@ -980,8 +980,27 @@ abbr[class|="stars"] {
   max-width: 885.156px;
 }
 
-.layer form> p:first-child {
-  text-align: right;
+.layer header> h2 {
+  padding: 0 0.5rem;
+  font-size: 1.5625em;
+  letter-spacing: 0.125em;
+  margin: 0.8em 0;
+  text-shadow: 0.125em 0.32768em 0.4096em rgba(55,71,79,0.2); /* GMD Blue Grey 800 */
+}
+
+.layer header> p {
+  float: right;
+  font-size: 1em;
+}
+
+.layer header> * {
+  display: inline-block;
+}
+
+.layer header::after {
+  clear: both;
+  content: "";
+  display: block;
 }
 
 .layer label,
@@ -1221,7 +1240,8 @@ abbr[class|="stars"] {
 
 @media screen and (min-width: 1080px) {
   #results-notice,
-  #reviews-container h2 {
+  #reviews-container h2,
+  .layer header> h2 {
     font-size: 1.953125em;
     margin: 0.64em 0;
   }

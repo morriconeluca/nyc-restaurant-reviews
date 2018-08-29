@@ -87,7 +87,7 @@
       <!-- end restaurant -->
       <!-- Beginning reviews -->
       <section id="reviews-container">
-        <ul id="reviews-list"></ul>
+        <ul id="reviews-list" aria-live="assertive"></ul>
       </section>
       <!-- End reviews -->
     </main>
@@ -101,18 +101,21 @@
     <!-- End footer -->
   </div> <!-- End page -->
 
-  <section id="overlay" class="layer" role="dialog" aria-hidden="true">
+  <section id="overlay" class="layer" role="dialog" aria-hidden="true" aria-labelledby="review-label">
     <form name="review">
-      <p><button type="button" tabindex="-1" id="close-overlay-button" aria-label="Close">✖</button></p>
+      <header>
+        <h2 id="review-label">Add Review</h2>
+        <p><button type="button" tabindex="-1" id="close-overlay-button" aria-label="Close">✖</button></p>
+      </header>
       <p><label for="username">What's your name?</label> <input id="username" name="username" type="text" placeholder="Your first name" minlength="2" maxlength="50" required autocomplete="given-name"></p>
       <fieldset>
         <legend tabindex="-1">Rate this restaurant:</legend>
         <p><span class="input-rating">
-          <label class="sr-only" for="star5">Rating: 5 of 5</label><input type="radio" tabindex="-1" name="star" id="star5" class="icon" value="5" required>
-          <label class="sr-only" for="star4">Rating: 4 of 5</label><input type="radio" tabindex="-1" name="star" id="star4" class="icon" value="4">
-          <label class="sr-only" for="star3">Rating: 3 of 5</label><input type="radio" tabindex="-1" name="star" id="star3" class="icon" value="3">
-          <label class="sr-only" for="star2">Rating: 2 of 5</label><input type="radio" tabindex="-1" name="star" id="star2" class="icon" value="2">
-          <label class="sr-only" for="star1">Rating: 1 of 5</label><input type="radio" tabindex="-1" name="star" id="star1" class="icon" value="1">
+          <label class="sr-only" for="star5">Rating: 5 of 5</label><input type="radio" tabindex="-1" name="rating" id="star5" class="icon" value="5" required>
+          <label class="sr-only" for="star4">Rating: 4 of 5</label><input type="radio" tabindex="-1" name="rating" id="star4" class="icon" value="4">
+          <label class="sr-only" for="star3">Rating: 3 of 5</label><input type="radio" tabindex="-1" name="rating" id="star3" class="icon" value="3">
+          <label class="sr-only" for="star2">Rating: 2 of 5</label><input type="radio" tabindex="-1" name="rating" id="star2" class="icon" value="2">
+          <label class="sr-only" for="star1">Rating: 1 of 5</label><input type="radio" tabindex="-1" name="rating" id="star1" class="icon" value="1">
         </span></p>
       </fieldset>
       <p><label for="comments">Leave your comments:</label> <textarea tabindex="-1" name="comments" id="comments" placeholder="Write here…" minlength="50" maxlength="1000" required></textarea></p>

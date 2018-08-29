@@ -35,7 +35,8 @@ class ClientError {
 
 const port = 1337,
       RESTAURANTS_URL = `http://localhost:${port}/restaurants`,
-      RESTAURANT_REVIEWS_URL = `http://localhost:${port}/reviews/?restaurant_id=`;
+      RESTAURANT_REVIEWS_URL = `http://localhost:${port}/reviews`,
+      RESTAURANT_REVIEWS_ID_URL = `${RESTAURANT_REVIEWS_URL}/?restaurant_id=`;
 
 
 let staticMap,
@@ -401,6 +402,8 @@ fetchItems('restaurants', RESTAURANTS_URL)
                 overlay = d.gEBI('overlay'),
                 form = d.querySelector('#overlay form'),
                 username = d.gEBI('username'),
+                rating = [].slice.call(d.getElementsByName('rating')),
+                comments = d.gEBI('comments'),
                 closeOverlayButton = d.gEBI('close-overlay-button'),
                 page = d.gEBI('page'),
                 focusableElementsString = ['a[href]', 'area[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', 'iframe', 'object', 'embed', '[contenteditable]'].join(',');
@@ -463,10 +466,7 @@ fetchItems('restaurants', RESTAURANTS_URL)
             // Add event listener to close overlay on press ESC.
             d.addEventListener('keydown', onESC);
 
-            form.addEventListener('submit', event => {
-              event.preventDefault();
-              event.stopPropagation();
-            });
+            form.addEventListener('submit', onSubmit);
 
             // Close overlay on press ESC.
             function onESC(event) {
@@ -476,6 +476,27 @@ fetchItems('restaurants', RESTAURANTS_URL)
                 closeOverlay();
                 closeOverlayButton.removeEventListener('click', closeOverlay);
               }
+            }
+
+            // Add review and close overlay on submit.
+            function onSubmit(event) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              const data = {
+                restaurant_id: restaurant.id,
+                name: username.value,
+                rating: parseInt(rating.filter(rate => rate.checked === true)[0].value),
+                comments: comments.value
+              };
+
+              addReview(data);
+
+              const ul = d.gEBI('reviews-list');
+              ul.insertBefore(createRestaurantReviewHTML(data), ul.firstChild);
+
+              form.reset();
+              closeOverlay();
             }
 
             // Close overlay function.
@@ -499,12 +520,13 @@ fetchItems('restaurants', RESTAURANTS_URL)
               // Move focus to add review button.
               addReviewButton.focus();
 
-              // Remove event listener on keydown.
+              // Remove event listener on keydown and on submit.
               d.removeEventListener('keydown', onESC);
+              form.removeEventListener('onsubmit', onSubmit);
             }
           });
 
-          fetchItems('reviews', RESTAURANT_REVIEWS_URL + restaurant.id, restaurant.id)
+          fetchItems('reviews', RESTAURANT_REVIEWS_ID_URL + restaurant.id, restaurant.id)
             .then(reviews => {
               // Fill restaurant reviews.
               fillRestaurantReviewsHTML(reviews);
@@ -544,20 +566,18 @@ fetchItems('restaurants', RESTAURANTS_URL)
                 ul = d.gEBI('reviews-list');
 
           title.innerHTML = 'Reviews';
-          container.appendChild(title);
+          container.insertBefore(title, container.firstChild);
 
           if (!reviews) {
             const noReviews = d.cE('p');
             noReviews.innerHTML = n.online ? 'No reviews yet!' : 'Sorry, reviews for this restaurant are not available offline.';
-            container.appendChild(noReviews);
+            container.insertBefore(noReviews, container.lastChild);
             return;
           }
 
           reviews.reverse().forEach(review => {
             ul.appendChild(createRestaurantReviewHTML(review));
           });
-
-          container.appendChild(ul);
         }
 
         /**
@@ -569,23 +589,35 @@ fetchItems('restaurants', RESTAURANTS_URL)
                 header = d.cE('header'),
                 heading = d.cE('h3'),
                 name = d.cE('span'),
-                date = d.cE('time'),
                 ratingContainer = d.cE('p'),
                 rating = d.cE('abbr'),
-                comments = d.cE('p'),
-                theDate = new Date(review.updatedAt),
-                options = {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                };
+                comments = d.cE('p');
 
           name.innerHTML = review.name;
 
-          date.dateTime = theDate.toISOString();
-          date.innerHTML = theDate.toLocaleDateString('en-US', options);
+          if (review.updatedAt) {
+            const date = d.cE('time'),
+                  theDate = new Date(review.updatedAt),
+                  options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  };
 
-          heading.append(name, date);
+            date.dateTime = theDate.toISOString();
+            date.innerHTML = theDate.toLocaleDateString('en-US', options);
+            date.className = 'time';
+
+            heading.append(name, date);
+          } else { // HTML for new review.
+            const sending = d.cE('span');
+
+            sending.innerHTML = 'Review is sending…';
+            sending.className = 'time';
+
+            heading.append(name, sending);
+          }
+
 
           header.appendChild(heading);
 
@@ -727,7 +759,7 @@ function onlyFetchItems(itemsString, url) {
 /**
  * Handle forgotten offline requests after page reload.
  */
-function handleForgottenOfflineRequests(itemsString, restaurantId) {
+function handleForgottenOfflineRequests(itemsString, id) {
   // Exit if service worker or sync manager are unavailable.
   if (!n.serviceWorker || !w.SyncManager) {
     return;
@@ -736,7 +768,12 @@ function handleForgottenOfflineRequests(itemsString, restaurantId) {
   /* Send a message to SW to handle forgotten offline requests for a restaurant. */
   if (itemsString === 'restaurants') {
     n.serviceWorker.controller.postMessage({
-      action: `favorite-sync-${restaurantId}`
+      action: `favorite-sync-${id}`
+    });
+  } else if (itemsString === 'reviews') {
+    /* Send a message to SW to handle forgotten offline requests for a review. */
+    n.serviceWorker.controller.postMessage({
+      action: `review-sync-${id}`
     });
   }
 }
@@ -747,9 +784,8 @@ function handleForgottenOfflineRequests(itemsString, restaurantId) {
 function setFavorite(data) {
   // When offline register a background sync tag.
   if (!n.onLine && n.serviceWorker && w.SyncManager && w.indexedDB) {
-    data.offline_request = true;
-    // Save data in indexedDB.
-    saveFavoriteOnIndexedDB(data);
+    // Save data in indexedDB and add offline request flag.
+    saveFavoriteOnIndexedDB(data, true);
     n.serviceWorker.ready
       .then(sw => {
         return sw.sync.register(`favorite-sync-${data.id}`);
@@ -757,7 +793,7 @@ function setFavorite(data) {
       .catch(error => {
         console.log(error);
         // Try to update database on network with fetch API.
-        fetchFavorite(data);
+        updateFavoriteOnline(data);
       });
     return;
   }
@@ -768,13 +804,13 @@ function setFavorite(data) {
   }
 
   // Update database on network with fetch API.
-  fetchFavorite(data);
+  updateFavoriteOnline(data);
 }
 
 /**
  * Function definition for updating database on network.
  */
-function fetchFavorite(data) {
+function updateFavoriteOnline(data) {
   fetch(`${RESTAURANTS_URL}/${data.id}/?is_favorite=${data.is_favorite}`, {
       method: 'PUT'
     })
@@ -786,7 +822,7 @@ function fetchFavorite(data) {
 /**
  * Save if the restaurant is favorite on idexedDB.
  */
-function saveFavoriteOnIndexedDB(data) {
+function saveFavoriteOnIndexedDB(data, offlineRequest) {
   // Open a connection with indexedDB.
   const request = w.indexedDB.open(`nyc_rr_data`, 1);
 
@@ -798,12 +834,12 @@ function saveFavoriteOnIndexedDB(data) {
 
     // Update data in indexedDB.
     request.onsuccess = event => {
-      const dbData = event.target.result;
-      dbData.is_favorite = data.is_favorite;
+      const idbData = event.target.result;
+      idbData.is_favorite = data.is_favorite;
 
-      if (data.offline_request) dbData.offline_request = true;
+      if (offlineRequest) idbData.offline_request = true;
 
-      const request = store.put(dbData);
+      const request = store.put(idbData);
 
       request.onerror = event => {
         console.log(event.target.error);
@@ -818,6 +854,99 @@ function saveFavoriteOnIndexedDB(data) {
   request.onerror = event => {
     console.log(event.target.error);
   };
+}
+
+/**
+ * Add review with background sync implementation.
+ */
+function addReview(data) {
+  // When offline register a background sync tag.
+  if (!n.onLine && n.serviceWorker && w.SyncManager && w.indexedDB) {
+    // Save data in indexedDB and add offline request flag.
+    saveReviewOnIndexedDB(data, true)
+      .then(reviewId => {
+        n.serviceWorker.ready
+          .then(sw => {
+            return sw.sync.register(`review-sync-${reviewId}`);
+          })
+          .catch(error => {
+            console.log(error);
+            // Try to update database on network with fetch API.
+            updateReviewOnline(data);
+          });
+      });
+  }
+
+  // Update database on network with fetch API.
+  updateReviewOnline(data);
+}
+
+/**
+ * Save review on idexedDB, and return a promise with the review id.
+ */
+function saveReviewOnIndexedDB(data, offlineRequest) {
+  return new Promise(resolve => {
+    // Open a connection with indexedDB.
+    const request = w.indexedDB.open(`nyc_rr_data`, 1);
+
+    // Open a transaction and obtain a reference to the object store.
+    request.onsuccess = event => {
+      const db = event.target.result,
+            store = db.transaction(['reviews'], 'readwrite').objectStore('reviews');
+
+      if (offlineRequest) data.offline_request = true;
+
+      // To save data on indexedDB the key path must to have a value.
+      data.id = data.id || `_${Math.random().toString(36).substr(2, 9)}`;
+
+      const request = store.put(data);
+
+      request.onsuccess = () => {
+        resolve(data.id);
+      };
+
+      request.onerror = event => {
+        console.log(event.target.error);
+      };
+    };
+
+    request.onerror = event => {
+      console.log(event.target.error);
+    };
+  });
+}
+
+/**
+ * Function definition for updating database on network.
+ */
+function updateReviewOnline(data) {
+  fetch(RESTAURANT_REVIEWS_URL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    })
+    .then(() => {
+      if (w.indexedDB) {
+        fetch(`${RESTAURANT_REVIEWS_ID_URL}${data.restaurant_id}`)
+          .then(response => {
+            if (!response.ok) {
+              throw Error(`Request failed. Returned status of ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then(reviews => {
+            // Save data into the object store.
+            reviews.forEach(review => {
+              saveReviewOnIndexedDB(review);
+            });
+          });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 /**
